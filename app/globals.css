@@ -344,6 +344,22 @@ h1 em { color: #7596D2; }
 .crm-note p { margin: 8px 0 0; color: #B8C9E8; font-size: 10px; line-height: 1.35; }
 .source-card { min-height: 258px; }
 .source-card h3 { max-width: 250px; }
+.source-kind { display: inline-flex; margin-bottom: 22px; padding: 6px 9px; border: 1px solid rgba(137,177,242,.28); color: #A9C5FF; font-size: 9px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.comparison-section { padding-top: 28px; }
+.comparison-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.comparison-card { min-height: 174px; padding: 24px; border: 1px solid var(--line); background: rgba(11,22,48,.78); }
+.comparison-card span { color: #A9BDE1; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.comparison-card p { max-width: 300px; margin: 48px 0 0; color: #D5E1F7; font-size: 15px; line-height: 1.4; }
+.comparison-card-accent { background: #193A7D; border-color: rgba(143,181,245,.48); box-shadow: 8px 8px 0 rgba(2,8,22,.18); }
+.comparison-card-accent span { color: #DCE8FF; }
+.faq-section { padding-top: 78px; }
+.faq-list { border-top: 1px solid var(--line); }
+.faq-list details { border-bottom: 1px solid var(--line); }
+.faq-list summary { display: flex; justify-content: space-between; gap: 24px; padding: 21px 4px; color: #E8F0FF; cursor: pointer; list-style: none; font-size: 17px; font-weight: 700; letter-spacing: -.025em; }
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary span { color: #8EACE5; font-size: 22px; font-weight: 400; line-height: 1; }
+.faq-list details[open] summary span { transform: rotate(45deg); }
+.faq-list details p { max-width: 760px; margin: -3px 0 21px; color: #AEBFDE; font-size: 14px; line-height: 1.55; }
 .formats-section { padding-top: 75px; }
 .format-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
 .format-card { min-height: 286px; display: flex; flex-direction: column; padding: 28px; border: 1px solid var(--line); background: #10244A; }
@@ -382,6 +398,7 @@ h1 em { color: #7596D2; }
   .workflow-grid-four { grid-template-columns: repeat(2, 1fr); }
   .support-section { grid-template-columns: 1fr; gap: 42px; }
   .audience-grid { grid-template-columns: repeat(2, 1fr); }
+  .comparison-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 680px) {

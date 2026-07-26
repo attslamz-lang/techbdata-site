@@ -2,9 +2,22 @@ import Link from "next/link";
 import { SiteFooter, SiteHeader } from "./components/SiteChrome";
 
 const sources = [
-  { number: "01", title: "Посещали сайты выбранных компаний", text: "Человек уже изучал предложения вашей ниши и сравнивал варианты." },
-  { number: "02", title: "Звонили по выбранным номерам", text: "Фиксируем интерес к категории там, где потенциальный клиент уже начал разговор." },
-  { number: "03", title: "Оставляли заявки или взаимодействовали", text: "Находим аудиторию, которая проявляла активность на сайтах компаний ниши." },
+  { number: "01", kind: "Сайт", title: "Посетили сайт компании ниши", text: "Человек уже изучал предложения и сравнивал варианты в вашей категории." },
+  { number: "02", kind: "Звонок", title: "Позвонили по номеру компании", text: "Фиксируем интерес там, где потенциальный клиент уже начал разговор." },
+  { number: "03", kind: "Заявка", title: "Оставили заявку или запрос", text: "Находим аудиторию, которая уже взаимодействовала с предложением вашей ниши." },
+];
+
+const comparison = [
+  ["Реклама", "Оплата за показы и клики. Спрос ещё нужно сформировать и дождаться."],
+  ["Холодная база", "Контакт есть, но интерес к вашей категории не подтверждён."],
+  ["techbdata", "Контакт уже проявил интерес к нише — менеджер получает контекст для разговора."],
+];
+
+const faq = [
+  ["Это готовые клиенты или просто номера?", "Есть два формата: контакты для самостоятельной обработки и лиды после квалификации колл-центром. Формат выбираете под работу вашего отдела продаж."],
+  ["Что получает менеджер вместе с контактом?", "Номер, источник, потребность, комментарий, текущий статус и, при квалификации, запись разговора."],
+  ["Можно ли начать с небольшой задачи?", "Да. Сначала согласовываем нишу, географию, критерии контакта и объём, который сможет обработать ваша команда."],
+  ["Как вы понимаете, какие источники работают?", "Команда сопровождения анализирует качество контактов, отключает слабые источники и масштабирует те, которые дают целевую аудиторию."],
 ];
 
 const workflow = [
@@ -32,9 +45,9 @@ export default function Home() {
         <div className="page-wrap hero-layout">
           <div className="hero-copy">
             <p className="eyebrow"><span /> КЛИЕНТЫ С УЖЕ СФОРМИРОВАННЫМ СПРОСОМ</p>
-            <h1>Получайте клиентов, которые уже ищут <em>ваши товары или услуги</em></h1>
+            <h1>Клиенты ваших конкурентов — <em>в вашем отделе продаж</em></h1>
             <p className="hero-description">
-              techbdata находит контакты людей, которые посещали сайты и звонили компаниям вашей ниши. Получайте контакты для самостоятельной обработки или передавайте их квалификацию нашему колл-центру.
+              Пока компании вашей ниши платят за рекламу и привлекают спрос, techbdata находит контакты заинтересованной аудитории. Получайте номера для самостоятельной обработки или готовых к разговору лидов после квалификации колл-центром.
             </p>
             <div className="hero-actions">
               <a className="button button-primary" href="#contact">Получить расчёт <span>↗</span></a>
@@ -72,9 +85,19 @@ export default function Home() {
           {sources.map((source) => (
             <article className="feature-card source-card" key={source.number}>
               <span className="feature-number">{source.number}</span>
-              <div><h3>{source.title}</h3><p>{source.text}</p></div>
+              <div><span className="source-kind">{source.kind}</span><h3>{source.title}</h3><p>{source.text}</p></div>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section className="comparison-section section page-wrap">
+        <div className="section-heading compact-heading">
+          <p className="eyebrow"><span /> ПОЧЕМУ НЕ ПРОСТО РЕКЛАМА</p>
+          <h2>Платите не за шум вокруг бренда, а за <em>следующий разговор.</em></h2>
+        </div>
+        <div className="comparison-grid">
+          {comparison.map(([title, text], index) => <article key={title} className={index === 2 ? "comparison-card comparison-card-accent" : "comparison-card"}><span>{title}</span><p>{text}</p></article>)}
         </div>
       </section>
 
@@ -84,8 +107,8 @@ export default function Home() {
           <h2>Выбираете, кто берёт контакт <em>в работу.</em></h2>
         </div>
         <div className="format-grid">
-          <article className="format-card"><span className="format-index">01 / SALES TEAM</span><h3>Контакты для вашего отдела продаж</h3><p>Получаете номер и данные об источнике. Ваши менеджеры самостоятельно связываются с потенциальными клиентами.</p><a href="#contact">Обсудить формат <span>↗</span></a></article>
-          <article className="format-card format-card-accent"><span className="format-index">02 / CALL-CENTER</span><h3>Квалифицированные клиенты</h3><p>Колл-центр techbdata связывается с контактом, выясняет задачи и передаёт менеджеру человека, готового продолжить обсуждение.</p><a href="#contact">Обсудить формат <span>↗</span></a></article>
+          <article className="format-card"><span className="format-index">КОНТАКТЫ</span><h3>Контакты для вашего отдела продаж</h3><p>Получаете номер и данные об источнике. Ваши менеджеры самостоятельно связываются с потенциальными клиентами.</p><a href="#contact">Обсудить формат <span>↗</span></a></article>
+          <article className="format-card format-card-accent"><span className="format-index">КВАЛИФИЦИРОВАННЫЕ ЛИДЫ</span><h3>Клиенты, готовые к разговору</h3><p>Команда techbdata связывается с контактом, выясняет задачу и передаёт менеджеру человека, готового продолжить обсуждение.</p><a href="#contact">Обсудить формат <span>↗</span></a></article>
         </div>
         <p className="format-note">Вы получаете не просто номер, а клиента, у которого уже выяснены задачи и который готов продолжить обсуждение с вашей компанией.</p>
       </section>
@@ -115,6 +138,11 @@ export default function Home() {
 
       <section className="tariff-section" id="tariffs">
         <div className="page-wrap"><div className="section-heading tariff-heading"><p className="eyebrow"><span /> ФОРМАТЫ И СТОИМОСТЬ</p><h2>Понятные условия <em>без лишних пакетов.</em></h2><p>Выбираете вариант обработки под ресурс и задачи вашего отдела продаж.</p></div><div className="tariff-grid"><article className="tariff-card"><span className="tariff-marker">ФОРМАТ 01</span><h3>Контакты</h3><p className="tariff-caption">Для самостоятельной обработки</p><div className="tariff-divider" /><p className="tariff-detail">Номера и данные об источнике для вашего отдела продаж.</p><a href="#contact" className="tariff-link">Цена по запросу <span>↗</span></a></article><article className="tariff-card tariff-card-accent"><span className="tariff-marker">ФОРМАТ 02</span><h3>1000 контактов</h3><p className="tariff-caption">С обработкой колл-центром</p><div className="tariff-divider" /><p className="tariff-detail">Квалификация задач и передача готовых к обсуждению клиентов в CRM.</p><a href="#contact" className="tariff-link">110 000 рублей <span>↗</span></a></article></div></div>
+      </section>
+
+      <section className="faq-section section page-wrap" id="faq">
+        <div className="section-heading compact-heading"><p className="eyebrow"><span /> ЧАСТЫЕ ВОПРОСЫ</p><h2>Коротко о том, что важно <em>до запуска.</em></h2></div>
+        <div className="faq-list">{faq.map(([question, answer]) => <details key={question}><summary>{question}<span>+</span></summary><p>{answer}</p></details>)}</div>
       </section>
 
       <section className="contact-section" id="contact"><div className="page-wrap contact-layout"><div><p className="eyebrow"><span /> СЛЕДУЮЩИЙ ШАГ</p><h2>Оценим потенциал вашей ниши и <em>предложим сценарий запуска.</em></h2><p className="contact-lead">Обсудим целевую аудиторию, подходящие источники и объём, который сможет обработать ваш отдел продаж.</p></div><div className="contact-panel"><p>ОБСУДИТЬ ЗАДАЧУ</p><div className="fake-input">Ваше имя</div><div className="fake-input">Телефон для связи</div><button type="button" className="button button-primary">Получить расчёт <span>↗</span></button><small>Форма демонстрационная. Механику отправки подключим отдельно.</small></div></div></section>
