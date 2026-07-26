@@ -1,4 +1,11 @@
+import { Fragment } from "react";
 import { SiteFooter, SiteHeader } from "./components/SiteChrome";
+
+const heroPrimaryWords = [
+  { text: "Клиенты", offset: 0, accent: false },
+  { text: "ваших", offset: 8, accent: false },
+  { text: "конкурентов", offset: 14, accent: true },
+];
 
 const launchSteps = [
   ["Определяем задачу", "Согласовываем нишу, географию и критерии целевого контакта."],
@@ -8,11 +15,10 @@ const launchSteps = [
 ];
 
 const managerFields = [
-  ["Контакт", "Компания, сегмент B2B"],
-  ["Источник", "Сайт компании ниши"],
-  ["Потребность", "Сравнивает предложения"],
-  ["Комментарий", "Готов обсудить задачу"],
-  ["Статус", "Квалифицирован"],
+  ["Контакт", "+7 9** *** 42 18"],
+  ["Источник", "Сайт отраслевой компании"],
+  ["Задача клиента", "Автоматизация контроля качества звонков"],
+  ["Комментарий оператора", "Готов посмотреть демонстрацию"],
   ["Запись разговора", "Доступна запись"],
 ];
 
@@ -39,7 +45,24 @@ export default function Home() {
         </div>
         <div className="page-wrap home-hero-inner">
           <h1 aria-label="Клиенты ваших конкурентов — в вашем отделе продаж">
-            <span className="hero-line hero-line-primary">Клиенты ваших <strong>конкурентов</strong></span>
+            <span className="hero-line hero-line-primary" aria-hidden="true">
+              {heroPrimaryWords.map(({ text, offset, accent }, wordIndex) => (
+                <Fragment key={text}>
+                  <span className={`hero-primary-word${accent ? " hero-primary-word-accent" : ""}`}>
+                    {Array.from(text).map((letter, letterIndex) => (
+                      <span
+                        className="hero-letter"
+                        key={`${text}-${letterIndex}`}
+                        style={{ animationDelay: `${0.12 + (offset + letterIndex) * 0.028}s` }}
+                      >
+                        {letter}
+                      </span>
+                    ))}
+                  </span>
+                  {wordIndex < heroPrimaryWords.length - 1 ? " " : ""}
+                </Fragment>
+              ))}
+            </span>
             <span className="hero-separator" aria-hidden="true"> — </span>
             <span className="hero-line hero-line-secondary"><span>в</span>{" "}<span>вашем</span>{" "}<span>отделе</span>{" "}<span>продаж</span></span>
           </h1>
@@ -54,15 +77,29 @@ export default function Home() {
 
       <section className="home-section audience-capture-section" id="why">
         <div className="page-wrap split-heading">
-          <div><p className="home-kicker"><span /> сформированный спрос</p><h2>Конкуренты уже привлекли аудиторию. <em>Получите её контакты.</em></h2></div>
+          <div><h2>Конкуренты уже привлекли аудиторию. <em>Получите её контакты</em></h2></div>
           <p>Вы сами определяете целевую аудиторию и источники. Мы можем работать по вашим спискам сайтов и номеров либо самостоятельно подобрать компании, чья аудитория соответствует вашим критериям.</p>
         </div>
-        <div className="page-wrap audience-flow-visual" aria-label="Путь контакта от рекламы компании ниши до отдела продаж">
-          <div className="flow-interface flow-ad"><small>Компания ниши</small><strong>Рекламное предложение</strong><span className="flow-ad-preview"><i /><i /><i /></span></div>
-          <div className="flow-interface flow-action"><small>Действие аудитории</small><strong>Изучает предложение</strong><span>повторный визит · звонок · обращение</span></div>
-          <div className="flow-interface flow-contact"><small>techbdata</small><strong>Контакт сформирован</strong><span>источник и интерес зафиксированы</span></div>
-          <div className="flow-interface flow-sales"><small>Отдел продаж</small><strong>Карточка готова к работе</strong><span>контакт · источник · комментарий</span></div>
-          <div className="flow-progress" aria-hidden="true"><i /></div>
+        <div className="page-wrap capture-scenario" aria-label="Реклама отраслевой компании приводит человека на сайт, после чего контакт поступает в отдел продаж">
+          <div className="scenario-stage scenario-ad">
+            <small>Реклама отраслевой компании</small>
+            <div className="scenario-ad-window"><strong>Автоматизация отдела продаж</strong><span>Перейти на сайт</span></div>
+          </div>
+          <div className="scenario-stage scenario-visit">
+            <small>Посещение или звонок</small>
+            <div className="scenario-browser-window"><span>company-site.ru</span><strong>Повторный визит зафиксирован</strong></div>
+          </div>
+          <div className="scenario-stage scenario-card">
+            <small>Карточка контакта</small>
+            <strong>+7 9** *** 42 18</strong>
+            <span>Источник: сайт отраслевой компании</span>
+          </div>
+          <div className="scenario-stage scenario-delivery">
+            <small>Отдел продаж</small>
+            <strong>Новый контакт получен</strong>
+            <span>Готов к первому звонку</span>
+          </div>
+          <div className="scenario-progress" aria-hidden="true"><i /></div>
         </div>
         <p className="page-wrap contact-principle">Платите за конкретные контакты, а не за показы и переходы.</p>
       </section>
@@ -77,26 +114,26 @@ export default function Home() {
                 <div className="browser-bar"><span /><span /><span /><b>company-site.ru</b></div>
                 <div className="browser-body"><small>Сайт компании</small><strong>Раздел «Услуги»</strong><div className="browser-nav"><i>Главная</i><i className="visited-section">Услуги</i><i>О компании</i></div><div className="visit-log"><span>Повторный визит</span><b>Источник зафиксирован</b></div></div>
               </div>
-              <div className="scene-output"><span>Контакт создан</span><b>в систему</b></div>
+              <div className="scene-output"><span>Контакт добавлен</span></div>
             </article>
 
             <article className="source-scene call-scene">
               <h3>Звонили по номерам ваших конкурентов</h3>
               <div className="call-interface" aria-label="Демонстрация данных звонка">
-                <div className="call-head"><span className="call-avatar">☎</span><div><small>Входящее действие</small><strong>+7 916 *** 42 18</strong></div><b>Москва</b></div>
-                <dl><div><dt>Интерес</dt><dd>Внедрение CRM для отдела продаж</dd></div><div><dt>Сотрудники</dt><dd>20–30 менеджеров</dd></div><div><dt>Следующий шаг</dt><dd>Готов обсудить демонстрацию на следующей неделе</dd></div></dl>
+                <div className="call-head"><span className="call-avatar">☎</span><div><small>Звонок в компанию вашей ниши</small><strong>+7 916 *** 42 18</strong></div><b>Москва</b></div>
+                <dl><div><dt>Интерес</dt><dd>Автоматизация контроля качества звонков</dd></div><div><dt>Отдел продаж</dt><dd>Около 25 менеджеров</dd></div><div><dt>Следующий шаг</dt><dd>Хочет посмотреть демонстрацию на следующей неделе</dd></div></dl>
               </div>
-              <div className="scene-output"><span>Детали раскрыты</span><b>в систему</b></div>
+              <div className="scene-output"><span>Контакт добавлен</span></div>
             </article>
 
             <article className="source-scene inquiry-scene">
-              <h3>Получали сообщения или взаимодействовали с предложениями ваших конкурентов</h3>
+              <h3>Получали сообщения от ваших конкурентов</h3>
               <div className="inquiry-interface" aria-label="Обезличенная демонстрационная карточка обращения">
                 <div className="inquiry-head"><span>А</span><div><small>Обращение</small><strong>Алексей · +7 977 *** 19 01</strong></div></div>
-                <p>Промышленная вентиляция для складского объекта</p>
-                <ul><li>Площадь около 2 500 м²</li><li>Сравнивает несколько подрядчиков</li><li>Ожидает предварительный расчёт</li><li>Готов принять звонок завтра после 14:00</li></ul>
+                <p>Система видеонаблюдения для производственного объекта</p>
+                <ul><li>Объект около 4 000 м²</li><li>Сравнивает несколько подрядчиков</li><li>Требуется предварительный расчёт</li><li>Готов принять звонок завтра после 14:00</li></ul>
               </div>
-              <div className="scene-output"><span>Карточка заполнена</span><b>в систему</b></div>
+              <div className="scene-output"><span>Контакт добавлен</span></div>
             </article>
           </div>
         </div>
@@ -104,14 +141,14 @@ export default function Home() {
 
       <section className="home-section mechanics-section" id="mechanics">
         <div className="page-wrap">
-          <div className="section-intro"><p className="home-kicker"><span /> механика продукта</p><h2>От интереса к контакту <em>в вашем отделе продаж.</em></h2></div>
+          <div className="section-intro"><p className="home-kicker"><span /> механика продукта</p><h2>От интереса к контакту <em>в вашем отделе продаж</em></h2></div>
           <div className="product-process" aria-label="Последовательность обработки контакта">
             <div className="process-track" aria-hidden="true"><i /></div>
-            <article className="process-step process-select"><small>Выбрать источники</small><strong>Сайты и номера</strong><div className="source-check"><span className="checked">Сайт компании ниши</span><span className="checked">Номер отдела продаж</span></div></article>
-            <article className="process-step process-receive"><small>Получить контакты</small><strong>Действие зафиксировано</strong><div className="created-contact"><span>+7 9** *** 42 18</span><b>Источник добавлен</b></div></article>
-            <article className="process-step process-route"><small>Обработать самостоятельно или квалифицировать</small><strong>Выбран маршрут</strong><div className="route-options"><span>Отдел продаж</span><span className="route-active">Колл-центр</span></div><div className="qualification-data"><i>Статус звонка: состоялся</i><i>Критерии: соответствуют</i><i>Комментарий оператора</i><i>Запись разговора</i></div></article>
-            <article className="process-step process-crm"><small>Передать результат в CRM</small><strong>Карточка готова</strong><div className="crm-result"><span>Квалифицирован</span><b>Контакт · источник · запись</b></div></article>
-            <div className="process-contact" aria-hidden="true"><span />контакт</div>
+            <article className="process-step process-select"><small>Выбираем источники</small><strong>Сайты и номера</strong><div className="source-check"><span className="checked">Сайт отраслевой компании</span><span className="checked">Номер отдела продаж</span></div></article>
+            <article className="process-step process-receive"><small>Получаем контакты</small><div className="captured-action">Действие потенциального клиента зафиксировано</div><div className="created-contact"><small>Карточка создана</small><span>+7 9** *** 42 18</span><b>Источник: сайт отраслевой компании</b></div></article>
+            <article className="process-step process-route"><small>Обрабатываем или квалифицируем</small><strong>Выбираем маршрут</strong><div className="route-options"><span>Отдел продаж</span><span className="route-active">Колл-центр</span></div><div className="qualification-data"><i>Звонок состоялся</i><i>Соответствует критериям</i><i>Комментарий оператора</i><i>Запись разговора</i></div></article>
+            <article className="process-step process-crm"><small>Передаём результат в CRM</small><strong>Готовая карточка</strong><div className="crm-result"><span>Квалифицирован</span><b>Контакт · источник · задача · запись</b></div></article>
+            <div className="process-contact" aria-hidden="true">контакт</div>
           </div>
         </div>
       </section>
@@ -128,7 +165,7 @@ export default function Home() {
 
       <section className="home-section manager-section">
         <div className="page-wrap manager-layout">
-          <div className="section-intro"><p className="home-kicker"><span /> карточка контакта</p><h2>Менеджер получает не номер, а <em>контекст разговора.</em></h2><p>Все важные детали собраны в одной карточке — чтобы быстрее понять задачу и продолжить диалог.</p></div>
+          <div className="section-intro"><p className="home-kicker"><span /> карточка контакта</p><h2>Менеджер получает <em>готовую информацию для первого разговора</em></h2><p>В карточке собраны контакт, источник, задача клиента, комментарий оператора и запись разговора.</p></div>
           <div className="manager-card"><div className="manager-card-head"><span>Карточка контакта</span><b>techbdata</b></div>{managerFields.map(([field, value]) => <div className="manager-row" key={field}><span>{field}</span><strong>{value}</strong></div>)}</div>
         </div>
       </section>
@@ -139,18 +176,18 @@ export default function Home() {
 
       <section className="home-section optimization-section">
         <div className="page-wrap optimization-layout">
-          <div className="section-intro"><p className="home-kicker"><span /> сопровождение и оптимизация</p><h2>Над вашим кабинетом работает <em>команда специалистов.</em></h2><p>Команда techbdata подбирает и проверяет источники, анализирует качество поступающих контактов, отключает слабые направления и увеличивает объём по тем, которые приводят целевую аудиторию.</p></div>
+          <div className="section-intro"><p className="home-kicker"><span /> сопровождение и оптимизация</p><h2>Над вашим кабинетом работает <em>команда специалистов</em></h2><p>Команда techbdata подбирает и проверяет источники, анализирует качество контактов, отключает слабые направления и увеличивает объём по тем, которые приводят целевую аудиторию.</p></div>
           <div className="optimization-console" aria-label="Демонстрация работы команды с источниками">
-            <div className="optimization-row source-good"><span>Источник A</span><strong>Высокая доля целевых контактов</strong><b>Масштабируем</b></div>
-            <div className="optimization-row source-weak"><span>Источник B</span><strong>Низкое качество</strong><b>Корректируем или отключаем</b></div>
-            <div className="optimization-row source-test"><span>Новый источник</span><strong>Первичная выборка</strong><b>Тестируем</b></div>
+            <div className="optimization-row source-good"><span>Сайт отраслевой компании</span><strong>Высокое качество</strong><b>Увеличиваем объём</b></div>
+            <div className="optimization-row source-weak"><span>Номер отдела продаж</span><strong>Много нецелевых контактов</strong><b>Корректируем или отключаем</b></div>
+            <div className="optimization-row source-test"><span>Новый сайт конкурента</span><strong>Тестовая выборка</strong><b>Запускаем тест</b></div>
             <div className="optimization-result"><span>Результат анализа</span><strong>Настройки кабинета обновлены</strong></div>
           </div>
         </div>
       </section>
 
       <section className="home-section audience-section-new">
-        <div className="page-wrap audience-layout"><div className="section-intro"><p className="home-kicker"><span /> кому подходит</p><h2>Когда спрос уже есть, но его нужно <em>забрать в работу.</em></h2></div><div className="audience-list"><p>B2B-компаниям с активным отделом продаж</p><p>Бизнесам с понятными конкурентами</p><p>Нишам, где клиент сравнивает предложения</p><p>Командам, которым нужен дополнительный поток контактов</p></div></div>
+        <div className="page-wrap audience-layout"><div className="section-intro"><p className="home-kicker"><span /> кому подходит</p><h2>Для компаний с <em>активным отделом продаж</em></h2></div><div className="audience-list"><p>B2B-компаниям с активным отделом продаж</p><p>Бизнесам с понятными конкурентами</p><p>Нишам, где клиент сравнивает предложения</p><p>Командам, которым нужен дополнительный поток контактов</p></div></div>
       </section>
 
       <section className="pricing-section" id="tariffs">
@@ -165,7 +202,7 @@ export default function Home() {
         <div className="page-wrap faq-layout"><div className="section-intro"><p className="home-kicker"><span /> ответы</p><h2>Что важно знать <em>до старта.</em></h2></div><div className="faq-list-new">{faqs.map(([question, answer]) => <details key={question}><summary>{question}<span>+</span></summary><p>{answer}</p></details>)}</div></div>
       </section>
 
-      <section className="final-cta" id="contact"><div className="final-cta-glow" aria-hidden="true" /><div className="page-wrap final-cta-inner"><p className="home-kicker"><span /> следующий шаг</p><h2>Найдём аудиторию, которая уже <em>смотрит в сторону вашей ниши.</em></h2><p>Обсудим задачу, формат работы и объём, который сможет обработать ваш отдел продаж.</p><a className="home-button home-button-primary" href="mailto:hello@techbdata.ru"><span>Получить расчёт</span><b aria-hidden="true">↗</b></a></div></section>
+      <section className="final-cta" id="contact"><div className="final-cta-glow" aria-hidden="true" /><div className="page-wrap final-cta-inner"><p className="home-kicker"><span /> следующий шаг</p><h2>Получите расчёт под вашу нишу и объём продаж</h2><p>Обсудим целевую аудиторию, подходящие источники и формат передачи контактов.</p><a className="home-button home-button-primary" href="mailto:hello@techbdata.ru"><span>Получить расчёт</span><b aria-hidden="true">↗</b></a></div></section>
 
       <SiteFooter />
     </main>
