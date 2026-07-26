@@ -29,7 +29,7 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="page-wrap footer-inner">
         <Link href="/" className="footer-brand">techbdata</Link>
-        <span>Прототип структуры и визуального направления</span>
+        <span>Контакты с уже сформированным спросом для вашего отдела продаж</span>
         <div className="footer-links">
           <Link href="/solutions">Решения</Link>
           <a href="/#tariffs">Тарифы</a>

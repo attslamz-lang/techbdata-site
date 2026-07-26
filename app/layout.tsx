@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "techbdata — целевые контакты для бизнеса",
-  description: "Прототип многостраничного сайта techbdata.",
+  description: "Контакты с уже сформированным спросом для отделов продаж.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
