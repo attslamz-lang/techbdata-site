@@ -143,7 +143,7 @@ export function LeadForm({ className = "", compact = false }: LeadFormProps) {
       </div>
 
       <button className="lead-submit" type="submit" disabled={submitState === "sending"}>
-        {submitState === "sending" ? "Отправляем…" : "Оставить заявку"}
+        {submitState === "sending" ? "Отправляем…" : "Получить расчёт"}
       </button>
 
       <div className={`lead-status lead-status-${submitState}`} aria-live="polite" aria-atomic="true">
@@ -248,9 +248,9 @@ function LeadModal() {
         <button className="lead-dialog-close" type="button" onClick={() => setOpen(false)} aria-label="Закрыть форму">
           ×
         </button>
-        <p className="lead-dialog-kicker">Обсудим задачу</p>
-        <h2 id={titleId}>Оставьте заявку</h2>
-        <p id={descriptionId}>Укажите имя и номер телефона — мы уточним аудиторию, источники и формат работы.</p>
+        <p className="lead-dialog-kicker">Расчёт под вашу нишу</p>
+        <h2 id={titleId}>Получите расчёт</h2>
+        <p id={descriptionId}>Укажите имя и номер телефона — мы уточним аудиторию, источники и формат получения контактов.</p>
         <LeadForm compact />
       </div>
     </div>
@@ -271,7 +271,7 @@ export function SiteHeader({ current }: SiteHeaderProps) {
             <a href="/#tariffs">Тарифы</a>
             <Link href="/cases" className={current === "cases" ? "nav-case-active" : ""} aria-current={current === "cases" ? "page" : undefined}>Кейсы</Link>
           </nav>
-          <button className="header-cta" type="button" onClick={openLeadForm}>Оставить заявку</button>
+          <button className="header-cta" type="button" onClick={openLeadForm}>Рассчитать стоимость</button>
         </div>
       </header>
       <LeadModal />
