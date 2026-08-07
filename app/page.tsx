@@ -12,20 +12,16 @@ const qualifiedDetails = [
 
 const productSteps = [
   {
-    title: "Вы задаёте критерии целевой аудитории",
-    text: "Опишите нужные компании, географию и признаки подходящего контакта. При желании передайте список конкретных конкурентов.",
+    title: "Вы описываете портрет клиента",
+    text: "Ниша, география и признаки нужного клиента. Если есть конкретные конкуренты — передаёте их список.",
   },
   {
-    title: "Мы настраиваем кабинет",
-    text: "Команда techbdata самостоятельно подбирает и подключает подходящие сайты, номера и другие источники.",
+    title: "Мы настраиваем источники",
+    text: "Подбираем сайты, номера и SMS-источники и настраиваем кабинет. Вам ничего не нужно подключать самостоятельно.",
   },
   {
-    title: "Фиксируем действия аудитории у конкурентов",
-    text: "Учитываем посещение сайта, звонок или обращение по предложению компании выбранной ниши.",
-  },
-  {
-    title: "Передаём контакт вашему отделу продаж",
-    text: "Контакт поступает напрямую менеджеру либо сначала проходит квалификацию колл-центром.",
+    title: "Передаём контакты в отдел продаж",
+    text: "Фиксируем нужное действие и передаём контакт напрямую менеджеру или сначала в колл-центр на квалификацию.",
   },
 ];
 
@@ -34,25 +30,19 @@ const sourceScenes = [
     type: "site",
     eyebrow: "Сайт",
     title: "Посещение сайта конкурента",
-    description: "Человек изучает услугу компании выбранной ниши.",
-    action: "Раздел услуги открыт",
-    processing: "Действие обрабатывается",
+    description: "Клиент заходит на выбранный сайт или страницу услуги. После зафиксированного посещения контакт появляется в кабинете.",
   },
   {
     type: "call",
     eyebrow: "Звонок",
-    title: "Звонок в отдел продаж",
-    description: "Аудитория связывается с компанией по опубликованному номеру.",
-    action: "Звонок зафиксирован",
-    processing: "Источник сопоставляется",
+    title: "Звонок конкуренту",
+    description: "Клиент звонит на выбранный номер конкурента. Мы фиксируем событие и добавляем контакт в кабинет.",
   },
   {
-    type: "offer",
-    eyebrow: "Предложение",
-    title: "Взаимодействие с предложением",
-    description: "Человек проявляет интерес к предложению компании вашей категории.",
-    action: "Интерес зафиксирован",
-    processing: "Данные обрабатываются",
+    type: "sms",
+    eyebrow: "SMS",
+    title: "SMS по выбранным номерам",
+    description: "Учитываем входящие и исходящие SMS по выбранным номерам. После события контакт добавляется в кабинет.",
   },
 ];
 
@@ -72,7 +62,7 @@ const faqs = [
   {
     question: "Откуда берутся контакты?",
     answer:
-      "Источниками становятся действия аудитории на сайтах, звонки по номерам и взаимодействия с предложениями компаний выбранной ниши.",
+      "Учитываем посещения выбранных сайтов и страниц, звонки конкурентам, а также входящие и исходящие SMS по выбранным номерам.",
   },
   {
     question: "Можно ли передать собственный список конкурентов?",
@@ -82,7 +72,7 @@ const faqs = [
   {
     question: "Чем это отличается от покупки готовой базы?",
     answer:
-      "Проект настраивается под вашу аудиторию и опирается на конкретные действия людей у выбранных источников. Вы получаете контакты по мере их добавления, а не статичный список.",
+      "Мы настраиваем источники под портрет вашего клиента. Контакты появляются после конкретных действий, а не приходят готовым статичным списком.",
   },
   {
     question: "Как контролируется качество?",
@@ -130,72 +120,6 @@ function useViewportAnimations() {
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, []);
-}
-
-function FloatingLeadCta() {
-  const [visible, setVisible] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
-
-  useEffect(() => {
-    try {
-      setDismissed(sessionStorage.getItem("techbdata-floating-cta-dismissed") === "1");
-    } catch {
-      setDismissed(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (dismissed) return;
-
-    const updateVisibility = () => {
-      if (window.innerWidth > 760) {
-        setVisible(false);
-        return;
-      }
-
-      const hero = document.querySelector<HTMLElement>(".hero");
-      const contact = document.getElementById("contact");
-      const heroPassed = hero ? hero.getBoundingClientRect().bottom < 120 : window.scrollY > window.innerHeight * 0.8;
-      const contactNear = contact ? contact.getBoundingClientRect().top < window.innerHeight * 0.92 : false;
-      setVisible(heroPassed && !contactNear);
-    };
-
-    updateVisibility();
-    window.addEventListener("scroll", updateVisibility, { passive: true });
-    window.addEventListener("resize", updateVisibility);
-    return () => {
-      window.removeEventListener("scroll", updateVisibility);
-      window.removeEventListener("resize", updateVisibility);
-    };
-  }, [dismissed]);
-
-  const dismiss = () => {
-    setDismissed(true);
-    try {
-      sessionStorage.setItem("techbdata-floating-cta-dismissed", "1");
-    } catch {
-      // The CTA still closes when session storage is unavailable.
-    }
-  };
-
-  if (dismissed) return null;
-
-  return (
-    <aside className={`floating-lead-cta${visible ? " is-visible" : ""}`} aria-hidden={!visible}>
-      <button
-        className="floating-lead-close"
-        type="button"
-        onClick={dismiss}
-        aria-label="Скрыть кнопку расчёта"
-        tabIndex={visible ? 0 : -1}
-      >
-        ×
-      </button>
-      <button className="floating-lead-button" type="button" onClick={() => openLeadForm()} tabIndex={visible ? 0 : -1}>
-        Рассчитать стоимость
-      </button>
-    </aside>
-  );
 }
 
 function ResultExample() {
@@ -374,14 +298,13 @@ export default function HomePage() {
           <div className="hero-shell">
             <div className="hero-copy">
               <span className="hero-kicker">Контакты аудитории вашей ниши</span>
-              <h1 aria-label="Получайте контакты людей, которые уже выбирают подрядчика — пока конкуренты тратят бюджет">
-                <span>Получайте контакты людей,</span>
-                <span>которые уже выбирают подрядчика</span>
-                <span>— пока конкуренты тратят бюджет</span>
+              <h1 aria-label="Получайте контакты клиентов ваших конкурентов">
+                <span>Получайте контакты клиентов</span>
+                <span>ваших конкурентов</span>
               </h1>
               <p className="hero-description">
-                Люди посещают сайты компаний вашей ниши, звонят и изучают предложения. techbdata фиксирует эти действия
-                и передаёт контакты вашему отделу продаж — напрямую или после квалификации.
+                Клиенты вашей ниши посещают сайты конкурентов, звонят и взаимодействуют с выбранными источниками.
+                techbdata фиксирует эти действия и передаёт контакты вашему отделу продаж — напрямую или после квалификации.
               </p>
               <div className="hero-actions">
                 <button className="button button-primary" type="button" onClick={() => openLeadForm()}>
@@ -445,16 +368,13 @@ export default function HomePage() {
           </div>
         </section>
 
-        <ResultExample />
-
         <section className="section logic-section" id="mechanics">
           <div className="section-shell">
             <div className="section-heading logic-heading">
               <span className="eyebrow">Логика продукта</span>
               <h2>Конкуренты вкладываются в рекламу, а их трафиком пользуетесь вы</h2>
               <p>
-                Вы определяете, какая аудитория нужна вашему отделу продаж. Настройку источников и передачу контактов
-                берёт на себя команда techbdata.
+                Опишите портрет клиента — мы подберём источники, настроим кабинет и передадим контакты вашему отделу продаж.
               </p>
             </div>
 
@@ -482,11 +402,8 @@ export default function HomePage() {
           <div className="section-shell">
             <div className="section-heading section-heading-centered">
               <span className="eyebrow">Источники контактов</span>
-              <h2>Получаем контакты по конкретным действиям аудитории</h2>
-              <p>
-                Три сценария работают по одной последовательности: действие фиксируется, данные обрабатываются, контакт
-                определяется и добавляется в кабинет.
-              </p>
+              <h2>Контакты из сайтов, звонков и SMS</h2>
+              <p>Выбираем конкретные сайты и номера, а затем учитываем посещения, звонки и SMS.</p>
             </div>
 
             <div className="source-scenes" data-reveal>
@@ -513,25 +430,24 @@ export default function HomePage() {
                     {scene.type === "call" && (
                       <div className="scene-phone">
                         <span className="scene-phone-icon">☎</span>
-                        <strong>Отдел продаж</strong>
+                        <strong>Звонок конкуренту</strong>
                         <span>+7 495 *** ** 42</span>
                         <i className="call-wave"><b /><b /><b /><b /><b /></i>
                       </div>
                     )}
-                    {scene.type === "offer" && (
+                    {scene.type === "sms" && (
                       <div className="scene-message">
-                        <span className="message-label">Предложение компании</span>
-                        <strong>Уточнить условия и расчёт</strong>
-                        <div><i /> Сообщение отправлено</div>
+                        <span className="message-label">SMS · выбранный номер</span>
+                        <strong>Подскажите стоимость и условия</strong>
+                        <div><i /> Входящее SMS получено</div>
                       </div>
                     )}
                   </div>
 
                   <ol className="source-sequence">
-                    <li><i />{scene.action}</li>
-                    <li><i />{scene.processing}</li>
+                    <li><i />Действие зафиксировано</li>
                     <li><i />Контакт определён</li>
-                    <li><i />Контакт добавлен</li>
+                    <li><i />Добавлен в кабинет</li>
                   </ol>
                 </article>
               ))}
@@ -591,15 +507,16 @@ export default function HomePage() {
           </div>
         </section>
 
+        <ResultExample />
+
         <section className="section quality-section" id="quality">
           <div className="section-shell quality-shell">
             <div className="quality-copy">
               <span className="eyebrow">Контроль качества</span>
-              <h2>Проектом управляет команда techbdata</h2>
+              <h2>Мы сами следим за качеством источников</h2>
               <p>
-                Вы не покупаете статичную базу и не разбираетесь в настройках. Команда techbdata контролирует
-                источники, анализирует обратную связь отдела продаж и корректирует проект. Вам достаточно задать
-                аудиторию, получать контакты и сообщать, какие из них подходят лучше.
+                Вы описываете портрет клиента. Мы настраиваем сайты, номера и другие источники, смотрим обратную связь
+                отдела продаж и корректируем их по ходу проекта.
               </p>
               <div className="quality-feedback">
                 <span>Обратная связь отдела продаж</span>
@@ -745,7 +662,6 @@ export default function HomePage() {
         </section>
       </main>
 
-      <FloatingLeadCta />
       <SiteFooter />
     </div>
   );
