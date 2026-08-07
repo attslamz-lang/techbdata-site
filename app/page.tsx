@@ -148,6 +148,11 @@ function FloatingLeadCta() {
     if (dismissed) return;
 
     const updateVisibility = () => {
+      if (window.innerWidth > 760) {
+        setVisible(false);
+        return;
+      }
+
       const hero = document.querySelector<HTMLElement>(".hero");
       const contact = document.getElementById("contact");
       const heroPassed = hero ? hero.getBoundingClientRect().bottom < 120 : window.scrollY > window.innerHeight * 0.8;
@@ -177,7 +182,13 @@ function FloatingLeadCta() {
 
   return (
     <aside className={`floating-lead-cta${visible ? " is-visible" : ""}`} aria-hidden={!visible}>
-      <button className="floating-lead-close" type="button" onClick={dismiss} aria-label="Скрыть кнопку расчёта">
+      <button
+        className="floating-lead-close"
+        type="button"
+        onClick={dismiss}
+        aria-label="Скрыть кнопку расчёта"
+        tabIndex={visible ? 0 : -1}
+      >
         ×
       </button>
       <button className="floating-lead-button" type="button" onClick={() => openLeadForm()} tabIndex={visible ? 0 : -1}>
@@ -269,33 +280,76 @@ function ResultExample() {
                 )}
               </div>
 
-              <aside className={`operator-panel${qualified ? " is-visible" : ""}`}>
-                {qualified ? (
-                  <>
-                    <div className="operator-heading">
-                      <span>Комментарий оператора</span>
-                      <span className="audio-record">Запись разговора · 04:18</span>
-                    </div>
-                    <p>
-                      «Алексей отвечает за выбор подрядчика. Компания собирает предложения на установку системы
-                      видеонаблюдения для производственного объекта площадью около 4 000 м². Необходимо рассчитать
-                      размещение камер внутри помещений и по периметру территории. Рассматривает несколько компаний,
-                      окончательное решение пока не принято. Готов обсудить задачу с техническим специалистом завтра
-                      после 14:00. Просил предварительно подготовить ориентировочный список вопросов для расчёта.»
-                    </p>
-                  </>
-                ) : (
-                  <div className="operator-empty">
-                    <span>Без квалификации</span>
-                    <p>Задача, комментарий оператора и запись разговора в этом формате не добавляются.</p>
+              {qualified && (
+                <aside className="operator-panel is-visible">
+                  <div className="operator-heading">
+                    <span>Комментарий оператора</span>
+                    <span className="audio-record">Запись разговора · 04:18</span>
                   </div>
-                )}
-              </aside>
+                  <p>
+                    «Алексей отвечает за выбор подрядчика. Компания собирает предложения на установку системы
+                    видеонаблюдения для производственного объекта площадью около 4 000 м². Необходимо рассчитать
+                    размещение камер внутри помещений и по периметру территории. Рассматривает несколько компаний,
+                    окончательное решение пока не принято. Готов обсудить задачу с техническим специалистом завтра
+                    после 14:00. Просил предварительно подготовить ориентировочный список вопросов для расчёта.»
+                  </p>
+                </aside>
+              )}
             </div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+const MIN_CPL = 500;
+const MAX_CPL = 10_000;
+
+function CplCalculator() {
+  const [currentCpl, setCurrentCpl] = useState(2545);
+  const normalized = Math.min(1, Math.max(0, (currentCpl - MIN_CPL) / (MAX_CPL - MIN_CPL)));
+  const coefficient = 0.3 + normalized * 0.05;
+  const techbdataCpl = Math.round(currentCpl * coefficient);
+  const reduction = Math.round((1 - techbdataCpl / currentCpl) * 100);
+  const formatCurrency = (value: number) => `${new Intl.NumberFormat("ru-RU").format(value)} ₽`;
+
+  return (
+    <div className="cpl-calculator" data-reveal>
+      <div className="cpl-input-panel">
+        <span className="cpl-label">Укажите текущую стоимость лида в вашем бизнесе</span>
+        <output className="cpl-current-value" htmlFor="current-cpl">
+          {formatCurrency(currentCpl)}
+        </output>
+        <input
+          id="current-cpl"
+          className="cpl-range"
+          type="range"
+          min={MIN_CPL}
+          max={MAX_CPL}
+          step="5"
+          value={currentCpl}
+          aria-label="Текущая стоимость лида"
+          aria-valuetext={formatCurrency(currentCpl)}
+          style={{ "--range-progress": `${normalized * 100}%` } as CSSProperties}
+          onChange={(event) => setCurrentCpl(Number(event.currentTarget.value))}
+        />
+        <div className="cpl-range-scale" aria-hidden="true">
+          <span>{formatCurrency(MIN_CPL)}</span>
+          <span>{formatCurrency(MAX_CPL)}</span>
+        </div>
+      </div>
+
+      <div className="cpl-result-panel" aria-live="polite">
+        <span className="cpl-label">Ориентировочная стоимость лида с techbdata</span>
+        <output className="cpl-tech-value">≈ {formatCurrency(techbdataCpl)}</output>
+        <strong>Примерно на {reduction}% ниже текущей стоимости</strong>
+      </div>
+
+      <p className="cpl-note">
+        Расчёт ориентировочный. Фактическая стоимость зависит от аудитории, источников и параметров проекта.
+      </p>
+    </div>
   );
 }
 
@@ -320,14 +374,14 @@ export default function HomePage() {
           <div className="hero-shell">
             <div className="hero-copy">
               <span className="hero-kicker">Контакты аудитории вашей ниши</span>
-              <h1 aria-label="Получайте контакты клиентов ваших конкурентов">
-                <span>Получайте контакты</span>
-                <span>клиентов ваших конкурентов</span>
+              <h1 aria-label="Получайте контакты людей, которые уже выбирают подрядчика — пока конкуренты тратят бюджет">
+                <span>Получайте контакты людей,</span>
+                <span>которые уже выбирают подрядчика</span>
+                <span>— пока конкуренты тратят бюджет</span>
               </h1>
               <p className="hero-description">
-                techbdata определяет контакты людей, которые посещали сайты, звонили или взаимодействовали с
-                предложениями компаний выбранной ниши. Контакты передаются напрямую вашему отделу продаж либо после
-                квалификации колл-центром.
+                Люди посещают сайты компаний вашей ниши, звонят и изучают предложения. techbdata фиксирует эти действия
+                и передаёт контакты вашему отделу продаж — напрямую или после квалификации.
               </p>
               <div className="hero-actions">
                 <button className="button button-primary" type="button" onClick={() => openLeadForm()}>
@@ -338,14 +392,9 @@ export default function HomePage() {
                 </a>
               </div>
               <div className="hero-trust" aria-label="Подтверждения">
-                <div>
-                  <span className="trust-mark" aria-hidden="true">S</span>
-                  <span>Резидент «Сколково»</span>
-                </div>
-                <div>
-                  <span className="trust-mark trust-mark-register" aria-hidden="true">РФ</span>
-                  <span>В реестре российского ПО</span>
-                </div>
+                <span><b aria-hidden="true">✓</b> Резидент «Сколково»</span>
+                <i aria-hidden="true" />
+                <span><b aria-hidden="true">✓</b> ПО включено в реестр Минцифры</span>
               </div>
             </div>
 
@@ -585,28 +634,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="section case-section" id="cases">
-          <div className="section-shell">
-            {/* TODO: Replace this demonstrational scenario with a confirmed techbdata case. */}
-            <div className="demo-case" data-reveal>
-              <div className="demo-case-copy">
-                <span className="demo-warning">Требуется замена на подтверждённый кейс.</span>
-                <span className="eyebrow">Временный пример</span>
-                <h2>Демонстрационный сценарий проекта</h2>
-                <p>
-                  Сценарий показывает логику будущего кейса без вымышленных результатов, показателей и названия клиента.
-                </p>
-              </div>
-              <div className="demo-case-details">
-                <div><span>Ниша</span><strong>Системы безопасности для коммерческих и производственных объектов</strong></div>
-                <div><span>Задача</span><strong>Находить компании, выбирающие подрядчика</strong></div>
-                <div><span>Источники</span><strong>Сайты интеграторов и номера отделов продаж</strong></div>
-                <div><span>Результат</span><strong>Контакты после квалификации с описанием объекта, задачи и удобного времени для звонка</strong></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section className="section launch-section" id="launch">
           <div className="section-shell launch-shell">
             <div className="section-heading launch-heading">
@@ -651,6 +678,8 @@ export default function HomePage() {
               </p>
             </div>
 
+            <CplCalculator />
+
             <div className="pricing-stage" data-reveal>
               <article className="price-option">
                 <div>
@@ -672,7 +701,7 @@ export default function HomePage() {
                 <span>Расчёт под вашу нишу</span>
                 <p>Уточним параметры аудитории и предложим подходящий формат.</p>
                 <button className="button button-primary" type="button" onClick={() => openLeadForm()}>
-                  Получить расчёт по своей нише
+                  Получить расчёт под свою нишу
                 </button>
               </div>
             </div>
