@@ -1,6 +1,7 @@
 "use client";
 
 import { type CSSProperties, useEffect, useState } from "react";
+import { MeshDriftBackground } from "./components/MeshDriftBackground";
 import { LeadForm, SiteFooter, SiteHeader, openLeadForm } from "./components/SiteChrome";
 
 const qualifiedDetails = [
@@ -286,14 +287,7 @@ export default function HomePage() {
 
       <main>
         <section className="hero" id="top">
-          <div className="hero-ambient" aria-hidden="true">
-            <span className="hero-bloom hero-bloom-one" />
-            <span className="hero-bloom hero-bloom-two" />
-            <span className="hero-bloom hero-bloom-three" />
-            <span className="hero-bloom hero-bloom-four" />
-            <span className="hero-light-pass" />
-            <span className="hero-grain" />
-          </div>
+          <MeshDriftBackground />
 
           <div className="hero-shell">
             <div className="hero-copy">
