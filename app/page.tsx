@@ -1,15 +1,10 @@
 "use client";
 
 import { type CSSProperties, useEffect, useState } from "react";
+import { ContactFormatScene, ControlLoop, SourcesShowcase } from "./components/HomeProductScenes";
 import { MeshDriftBackground } from "./components/MeshDriftBackground";
+import { DataRailButton } from "./components/MotionPrimitives";
 import { LeadForm, SiteFooter, SiteHeader, openLeadForm } from "./components/SiteChrome";
-
-const qualifiedDetails = [
-  "Объект около 4 000 м²",
-  "Сравнивает несколько подрядчиков",
-  "Требуется предварительный расчёт",
-  "Готов принять звонок завтра после 14:00",
-];
 
 const productSteps = [
   {
@@ -18,40 +13,12 @@ const productSteps = [
   },
   {
     title: "Мы настраиваем источники",
-    text: "Подбираем сайты, номера и SMS-источники и настраиваем кабинет. Вам ничего не нужно подключать самостоятельно.",
+    text: "Настраиваем выбранные сайты и номера и передаём контакты после посещения, звонка или SMS. Вам ничего не нужно подключать самостоятельно.",
   },
   {
     title: "Передаём контакты в отдел продаж",
     text: "Фиксируем нужное действие и передаём контакт напрямую менеджеру или сначала в колл-центр на квалификацию.",
   },
-];
-
-const sourceScenes = [
-  {
-    type: "site",
-    eyebrow: "Сайт",
-    title: "Посещение сайта конкурента",
-    description: "Клиент заходит на выбранный сайт или страницу услуги. После зафиксированного посещения контакт появляется в кабинете.",
-  },
-  {
-    type: "call",
-    eyebrow: "Звонок",
-    title: "Звонок конкуренту",
-    description: "Клиент звонит на выбранный номер конкурента. Мы фиксируем событие и добавляем контакт в кабинет.",
-  },
-  {
-    type: "sms",
-    eyebrow: "SMS",
-    title: "SMS по выбранным номерам",
-    description: "Учитываем входящие и исходящие SMS по выбранным номерам. После события контакт добавляется в кабинет.",
-  },
-];
-
-const qualityRows = [
-  { source: "Сайты интеграторов", state: "Стабильный", action: "Продолжаем работу", tone: "stable" },
-  { source: "Номера отделов продаж", state: "Проверяется", action: "Анализируем обратную связь", tone: "review" },
-  { source: "Новая группа сайтов", state: "Новый источник", action: "Тестируем", tone: "new" },
-  { source: "Источник с низким качеством", state: "Слабый источник", action: "Отключён и заменён", tone: "off" },
 ];
 
 const faqs = [
@@ -121,111 +88,6 @@ function useViewportAnimations() {
     elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, []);
-}
-
-function ResultExample() {
-  const [mode, setMode] = useState<"direct" | "qualified">("qualified");
-  const qualified = mode === "qualified";
-
-  return (
-    <section className="section result-section" id="result-example">
-      <div className="section-shell result-shell">
-        <div className="section-heading section-heading-split">
-          <div>
-            <span className="eyebrow">Пример результата</span>
-            <h2>Посмотрите, какие данные получает менеджер</h2>
-          </div>
-          <p>
-            Переключите формат, чтобы увидеть разницу между контактом без обзвона и карточкой после квалификации.
-          </p>
-        </div>
-
-        <div className="result-workspace" data-reveal>
-          <div className="result-tabs" role="tablist" aria-label="Формат контакта">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={!qualified}
-              aria-controls="result-panel"
-              className={!qualified ? "is-active" : ""}
-              onClick={() => setMode("direct")}
-            >
-              Без обзвона
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={qualified}
-              aria-controls="result-panel"
-              className={qualified ? "is-active" : ""}
-              onClick={() => setMode("qualified")}
-            >
-              После квалификации
-            </button>
-          </div>
-
-          <div className={`crm-result-card ${qualified ? "is-qualified" : "is-direct"}`} id="result-panel" role="tabpanel">
-            <div className="crm-card-topbar">
-              <div>
-                <span className="crm-kicker">Обращение</span>
-                <strong>{qualified ? "Алексей · +7 977 *** 19 01" : "+7 977 *** 19 01"}</strong>
-              </div>
-              <span className={`crm-status ${qualified ? "qualified" : "direct"}`}>
-                {qualified ? "Квалификация завершена" : "Добавлен в кабинет"}
-              </span>
-            </div>
-
-            <div className="crm-result-grid">
-              <div className="crm-main-column">
-                <div className="crm-subject">
-                  <span>Источник</span>
-                  <strong>Сайт интегратора систем безопасности</strong>
-                </div>
-                <div className="crm-data-row">
-                  <span>Совершённое действие</span>
-                  <strong>Посещение страницы «Видеонаблюдение для бизнеса»</strong>
-                </div>
-                <div className="crm-data-row">
-                  <span>Дата</span>
-                  <strong>Сегодня, 12:40</strong>
-                </div>
-
-                {qualified && (
-                  <div className="crm-qualified-data" aria-live="polite">
-                    <div className="crm-subject crm-subject-accent">
-                      <span>Задача</span>
-                      <strong>Система видеонаблюдения для производственного объекта</strong>
-                    </div>
-                    <ul>
-                      {qualifiedDetails.map((detail) => (
-                        <li key={detail}>{detail}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              {qualified && (
-                <aside className="operator-panel is-visible">
-                  <div className="operator-heading">
-                    <span>Комментарий оператора</span>
-                    <span className="audio-record">Запись разговора · 04:18</span>
-                  </div>
-                  <p>
-                    «Алексей отвечает за выбор подрядчика. Компания собирает предложения на установку системы
-                    видеонаблюдения для производственного объекта площадью около 4 000 м². Необходимо рассчитать
-                    размещение камер внутри помещений и по периметру территории. Рассматривает несколько компаний,
-                    окончательное решение пока не принято. Готов обсудить задачу с техническим специалистом завтра
-                    после 14:00. Просил предварительно подготовить ориентировочный список вопросов для расчёта.»
-                  </p>
-                </aside>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
 }
 
 const MIN_CPL = 500;
@@ -301,12 +163,12 @@ export default function HomePage() {
                 techbdata фиксирует эти действия и передаёт контакты вашему отделу продаж — напрямую или после квалификации.
               </p>
               <div className="hero-actions">
-                <button className="button button-primary" type="button" onClick={() => openLeadForm()}>
+                <DataRailButton onClick={() => openLeadForm()}>
                   Рассчитать стоимость контактов
-                </button>
-                <a className="button button-secondary" href="#result-example">
+                </DataRailButton>
+                <DataRailButton variant="secondary" href="#result-example">
                   Посмотреть пример результата
-                </a>
+                </DataRailButton>
               </div>
               <div className="hero-trust" aria-label="Подтверждения">
                 <span><b aria-hidden="true">✓</b> Резидент «Сколково»</span>
@@ -372,212 +234,29 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="logic-route" data-reveal>
-              <div className="logic-spine" aria-hidden="true"><span /></div>
+            <div className="editorial-steps" data-reveal>
+              <div className="editorial-data-line" aria-hidden="true"><span /></div>
               {productSteps.map((step, index) => (
-                <article className="logic-step" key={step.title} style={{ "--step-index": index } as CSSProperties}>
-                  <span className="logic-step-marker" aria-hidden="true">{index + 1}</span>
-                  <div>
-                    <h3>{step.title}</h3>
-                    <p>{step.text}</p>
-                  </div>
+                <article className="editorial-step" key={step.title} style={{ "--step-index": index } as CSSProperties}>
+                  <span className="editorial-step-number" aria-hidden="true">0{index + 1}</span>
+                  <h3>{step.title}</h3>
+                  <p>{step.text}</p>
                 </article>
               ))}
             </div>
 
             <div className="logic-accent">
               <span>Платите за контакты, а не за показы и клики.</span>
-              <button type="button" onClick={() => openLeadForm()}>Обсудить вашу аудиторию</button>
+              <DataRailButton variant="secondary" onClick={() => openLeadForm()}>Обсудить вашу аудиторию</DataRailButton>
             </div>
           </div>
         </section>
 
-        <section className="section sources-section" id="sources">
-          <div className="section-shell">
-            <div className="section-heading section-heading-centered">
-              <span className="eyebrow">Источники контактов</span>
-              <h2>Контакты из сайтов, звонков и SMS</h2>
-              <p>Выбираем конкретные сайты и номера, а затем учитываем посещения, звонки и SMS.</p>
-            </div>
+        <SourcesShowcase />
 
-            <div className="source-scenes" data-reveal>
-              {sourceScenes.map((scene, index) => (
-                <article
-                  className={`source-scene source-scene-${scene.type}`}
-                  key={scene.type}
-                  style={{ "--scene-index": index } as CSSProperties}
-                >
-                  <div className="source-scene-heading">
-                    <span>{scene.eyebrow}</span>
-                    <h3>{scene.title}</h3>
-                    <p>{scene.description}</p>
-                  </div>
+        <ContactFormatScene onLead={() => openLeadForm()} />
 
-                  <div className={`source-visual source-visual-${scene.type}`} aria-hidden="true">
-                    {scene.type === "site" && (
-                      <div className="scene-browser">
-                        <div className="scene-browser-top"><i /><i /><i /><span>security-example.ru</span></div>
-                        <div className="scene-browser-content"><b>Видеонаблюдение для бизнеса</b><span>Расчёт решения для объекта</span></div>
-                        <span className="scene-pointer" />
-                      </div>
-                    )}
-                    {scene.type === "call" && (
-                      <div className="scene-phone">
-                        <span className="scene-phone-icon">☎</span>
-                        <strong>Звонок конкуренту</strong>
-                        <span>+7 495 *** ** 42</span>
-                        <i className="call-wave"><b /><b /><b /><b /><b /></i>
-                      </div>
-                    )}
-                    {scene.type === "sms" && (
-                      <div className="scene-message">
-                        <span className="message-label">SMS · выбранный номер</span>
-                        <strong>Подскажите стоимость и условия</strong>
-                        <div><i /> Входящее SMS получено</div>
-                      </div>
-                    )}
-                  </div>
-
-                  <ol className="source-sequence">
-                    <li><i />Действие зафиксировано</li>
-                    <li><i />Контакт определён</li>
-                    <li><i />Добавлен в кабинет</li>
-                  </ol>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section formats-section" id="formats">
-          <div className="section-shell">
-            <div className="section-heading section-heading-split formats-heading">
-              <div>
-                <span className="eyebrow">Два формата</span>
-                <h2>Получайте контакты напрямую или после квалификации</h2>
-              </div>
-              <p>Выберите, какие данные нужны вашему менеджеру перед первым звонком.</p>
-            </div>
-
-            <div className="formats-split" data-reveal>
-              <article className="format-panel format-direct">
-                <span className="format-label">Без обзвона</span>
-                <h3>Контакт поступает напрямую</h3>
-                <p>
-                  Ваш отдел продаж самостоятельно связывается с человеком и продолжает коммуникацию.
-                </p>
-                <div className="format-data-stack">
-                  <div><span>Телефон</span><strong>+7 977 *** 19 01</strong></div>
-                  <div><span>Источник</span><strong>Сайт компании вашей ниши</strong></div>
-                  <div><span>Действие</span><strong>Посещение страницы услуги</strong></div>
-                  <div><span>Дата</span><strong>Сегодня, 12:40</strong></div>
-                </div>
-              </article>
-
-              <div className="format-divider" aria-hidden="true">
-                <span>Колл-центр добавляет</span>
-              </div>
-
-              <article className="format-panel format-qualified">
-                <span className="format-label">После квалификации</span>
-                <h3>Менеджер получает больше данных</h3>
-                <p>
-                  Колл-центр уточняет задачу и готовность продолжить разговор по согласованным критериям.
-                </p>
-                <div className="format-data-stack format-added-data">
-                  <div><span>Задача</span><strong>Видеонаблюдение для объекта</strong></div>
-                  <div><span>Комментарий</span><strong>Краткое описание запроса</strong></div>
-                  <div><span>Удобное время</span><strong>Завтра после 14:00</strong></div>
-                  <div><span>Запись разговора</span><strong>04:18</strong></div>
-                </div>
-              </article>
-            </div>
-
-            <div className="formats-action">
-              <button className="button button-primary" type="button" onClick={() => openLeadForm()}>
-                Подобрать формат под вашу задачу
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <ResultExample />
-
-        <section className="section quality-section" id="quality">
-          <div className="section-shell quality-shell">
-            <div className="quality-copy">
-              <span className="eyebrow">Контроль качества</span>
-              <h2>Мы сами следим за качеством источников</h2>
-              <p>
-                Вы описываете портрет клиента. Мы настраиваем сайты, номера и другие источники, смотрим обратную связь
-                отдела продаж и корректируем их по ходу проекта.
-              </p>
-              <div className="quality-feedback">
-                <span>Обратная связь отдела продаж</span>
-                <strong>Помогает точнее управлять источниками</strong>
-              </div>
-            </div>
-
-            <div className="quality-console" data-reveal>
-              <div className="console-topbar">
-                <div><i /><span>Центр управления источниками</span></div>
-                <span>Обновлено сегодня</span>
-              </div>
-              <div className="quality-table" role="table" aria-label="Статусы источников">
-                <div className="quality-table-head" role="row">
-                  <span role="columnheader">Источник</span>
-                  <span role="columnheader">Статус</span>
-                  <span role="columnheader">Действие команды</span>
-                </div>
-                {qualityRows.map((row, index) => (
-                  <div className="quality-row" role="row" key={row.state} style={{ "--row-index": index } as CSSProperties}>
-                    <span role="cell">{row.source}</span>
-                    <span role="cell" className={`quality-state quality-state-${row.tone}`}><i />{row.state}</span>
-                    <strong role="cell">{row.action}</strong>
-                  </div>
-                ))}
-              </div>
-              <div className="console-summary">
-                <span>Текущий фокус</span>
-                <strong>Стабильные источники и тест новых направлений</strong>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="section launch-section" id="launch">
-          <div className="section-shell launch-shell">
-            <div className="section-heading launch-heading">
-              <span className="eyebrow">Запуск проекта</span>
-              <h2>Вам не нужно ничего настраивать самостоятельно</h2>
-              <p>
-                Вы описываете нужную аудиторию и при желании передаёте список конкурентов. Остальную настройку выполняет
-                команда techbdata.
-              </p>
-            </div>
-
-            <div className="launch-timeline" data-reveal>
-              <article>
-                <i aria-hidden="true" />
-                <h3>Согласовываем аудиторию</h3>
-                <p>Определяем нишу, географию и признаки подходящего контакта.</p>
-                <span>От вас: описание аудитории</span>
-              </article>
-              <article>
-                <i aria-hidden="true" />
-                <h3>Подбираем сайты и номера</h3>
-                <p>Работаем с вашим списком конкурентов или самостоятельно формируем источники.</p>
-                <span>От techbdata: подбор и настройка</span>
-              </article>
-              <article>
-                <i aria-hidden="true" />
-                <h3>Настраиваем передачу контактов</h3>
-                <p>Контакты поступают напрямую или после квалификации. Вы сообщаете команде, какие подходят лучше.</p>
-                <span>Совместно: обратная связь по качеству</span>
-              </article>
-            </div>
-          </div>
-        </section>
+        <ControlLoop />
 
         <section className="section pricing-section" id="tariffs">
           <div className="section-shell">
@@ -611,9 +290,9 @@ export default function HomePage() {
               <div className="pricing-cta-panel">
                 <span>Расчёт под вашу нишу</span>
                 <p>Уточним параметры аудитории и предложим подходящий формат.</p>
-                <button className="button button-primary" type="button" onClick={() => openLeadForm()}>
+                <DataRailButton onClick={() => openLeadForm()}>
                   Получить расчёт под свою нишу
-                </button>
+                </DataRailButton>
               </div>
             </div>
           </div>

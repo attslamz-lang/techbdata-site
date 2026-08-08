@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useId, useRef, useState } from "react";
+import { DataRailButton } from "./MotionPrimitives";
 
 type SiteHeaderProps = {
   current?: "solutions" | "company" | "cases" | "contacts";
@@ -421,7 +422,7 @@ export function SiteHeader({ current }: SiteHeaderProps) {
               <a href="tel:89778688057">8 977 868-80-57</a>
               <a href="https://t.me/techbdata" target="_blank" rel="noreferrer">Telegram</a>
             </div>
-            <button className="header-cta" type="button" onClick={openLeadForm}>Рассчитать стоимость</button>
+            <DataRailButton className="header-cta" variant="header" onClick={openLeadForm}>Рассчитать стоимость</DataRailButton>
           </div>
         </div>
       </header>
