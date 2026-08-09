@@ -178,12 +178,28 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="hero-product-scene" aria-label="Путь контакта от источника до менеджера">
-              <div className="hero-scene-bar">
-                <span>techbdata · поток контактов</span>
-                <span className="live-state"><i /> Система активна</span>
+            <div className="hero-visual-composition">
+              <div className="hero-sphere-layer" aria-hidden="true">
+                <ParticleSphere className="hero-particle-sphere" />
               </div>
-              <div className="hero-scene-body">
+
+              <svg
+                className="hero-sphere-signal"
+                viewBox="0 0 680 520"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path pathLength="1" d="M 574 146 C 536 182, 504 242, 427 334" />
+                <circle className="hero-signal-origin" cx="574" cy="146" r="4" />
+                <circle className="hero-signal-contact" cx="427" cy="334" r="4" />
+              </svg>
+
+              <div className="hero-product-scene" aria-label="Путь контакта от источника до менеджера">
+                <div className="hero-scene-bar">
+                  <span>techbdata · поток контактов</span>
+                  <span className="live-state"><i /> Система активна</span>
+                </div>
+                <div className="hero-scene-body">
                 <div className="hero-stage hero-stage-source">
                   <span className="stage-label">Источник</span>
                   <div className="source-browser-mini">
@@ -219,6 +235,7 @@ export default function HomePage() {
                   <span className="stage-label">Менеджер</span>
                   <strong>Готово к звонку</strong>
                   <span>Карточка в отделе продаж</span>
+                </div>
                 </div>
               </div>
             </div>
@@ -258,15 +275,6 @@ export default function HomePage() {
         <ContactFormatScene onLead={() => openLeadForm()} />
 
         <ControlLoop />
-
-        <section className="section sphere-preview-section" aria-label="Предварительный просмотр Particle Sphere">
-          <div className="section-shell sphere-preview-shell">
-            <span className="sphere-preview-caption" aria-hidden="true">Particle sphere · preview</span>
-            <div className="sphere-preview-stage">
-              <ParticleSphere className="sphere-preview-object" />
-            </div>
-          </div>
-        </section>
 
         <section className="section pricing-section" id="tariffs">
           <div className="section-shell">

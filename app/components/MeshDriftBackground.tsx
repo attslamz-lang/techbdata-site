@@ -430,6 +430,7 @@ export function MeshDriftBackground() {
     let frameId: number | null = null;
     let startedAt = 0;
     let elapsedSeconds = 0;
+    let isNearViewport = true;
     let disposed = false;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -460,7 +461,10 @@ export function MeshDriftBackground() {
     };
 
     const renderFrame = (timestamp: number) => {
-      if (disposed) return;
+      if (disposed || document.hidden || reducedMotion.matches || !isNearViewport) {
+        frameId = null;
+        return;
+      }
       const seconds = elapsedSeconds + (timestamp - startedAt) / 1000;
       draw(seconds);
       frameId = window.requestAnimationFrame(renderFrame);
@@ -474,7 +478,13 @@ export function MeshDriftBackground() {
     };
 
     const play = () => {
-      if (disposed || frameId !== null || document.hidden || reducedMotion.matches) return;
+      if (
+        disposed ||
+        frameId !== null ||
+        document.hidden ||
+        reducedMotion.matches ||
+        !isNearViewport
+      ) return;
       startedAt = performance.now();
       frameId = window.requestAnimationFrame(renderFrame);
     };
@@ -500,9 +510,20 @@ export function MeshDriftBackground() {
     const resizeObserver = typeof ResizeObserver === "undefined"
       ? null
       : new ResizeObserver(resize);
+    const intersectionObserver = typeof IntersectionObserver === "undefined"
+      ? null
+      : new IntersectionObserver(
+        ([entry]) => {
+          isNearViewport = entry.isIntersecting;
+          if (isNearViewport) play();
+          else pause();
+        },
+        { rootMargin: "200px 0px", threshold: 0 },
+      );
 
     if (resizeObserver) resizeObserver.observe(host);
     else window.addEventListener("resize", resize, { passive: true });
+    intersectionObserver?.observe(host);
 
     document.addEventListener("visibilitychange", handleVisibility);
     reducedMotion.addEventListener("change", handleMotionPreference);
@@ -512,6 +533,7 @@ export function MeshDriftBackground() {
       disposed = true;
       pause();
       resizeObserver?.disconnect();
+      intersectionObserver?.disconnect();
       if (!resizeObserver) window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", handleVisibility);
       reducedMotion.removeEventListener("change", handleMotionPreference);
