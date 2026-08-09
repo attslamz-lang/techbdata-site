@@ -23,8 +23,8 @@ const FULL_TURN_MS = 62_000;
 const TARGET_FRAME_MS = 1000 / 30;
 const DPR_CAP = 1.5;
 const MAX_CANVAS_PIXELS = 1_050_000;
-const ALPHA_LEVELS = [0.018, 0.032, 0.052, 0.078, 0.11, 0.155, 0.22, 0.34];
-const PARTICLE_TONES = ["#355C91", "#416FAE", "#6674D9", "#58B8CF", "#EAF4FF"];
+const ALPHA_LEVELS = [0.024, 0.044, 0.07, 0.105, 0.15, 0.21, 0.3, 0.42];
+const PARTICLE_TONES = ["#355C91", "#416FAE", "#6674D9", "#776EF0", "#58B8CF", "#DCEBFF"];
 
 function noise(index: number, offset = 0) {
   const value = Math.sin((index + 1) * 12.9898 + offset * 78.233) * 43_758.5453;
@@ -44,10 +44,10 @@ function createSpherePoints(count: number): SpherePoint[] {
       y: y * radius,
       z: Math.sin(azimuth) * latitudeRadius * radius,
       radius,
-      size: 0.42 + noise(index, 3) * 0.58,
-      intensity: 0.78 + noise(index, 4) * 0.2,
-      tone: toneSeed < 0.38 ? 0 : toneSeed < 0.62 ? 1 : toneSeed < 0.85 ? 2 : toneSeed < 0.975 ? 3 : 4,
-      highlight: noise(index, 5) > 0.987,
+      size: 0.46 + noise(index, 3) * 0.62,
+      intensity: 0.82 + noise(index, 4) * 0.18,
+      tone: toneSeed < 0.44 ? 0 : toneSeed < 0.7 ? 1 : toneSeed < 0.87 ? 2 : toneSeed < 0.93 ? 3 : toneSeed < 0.985 ? 4 : 5,
+      highlight: noise(index, 5) > 0.992,
     };
   });
 }
@@ -59,13 +59,13 @@ function particleCountForWidth(width: number, coarsePointer: boolean) {
 }
 
 function alphaLevelFor(value: number) {
-  if (value < 0.025) return 0;
-  if (value < 0.042) return 1;
-  if (value < 0.065) return 2;
-  if (value < 0.094) return 3;
-  if (value < 0.13) return 4;
-  if (value < 0.185) return 5;
-  if (value < 0.28) return 6;
+  if (value < 0.035) return 0;
+  if (value < 0.06) return 1;
+  if (value < 0.09) return 2;
+  if (value < 0.13) return 3;
+  if (value < 0.18) return 4;
+  if (value < 0.25) return 5;
+  if (value < 0.34) return 6;
   return 7;
 }
 
@@ -143,16 +143,16 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
         const screenY = centerY + rotatedY * radius * perspective;
         const directional = Math.max(
           0,
-          normalizedX * -0.62 + normalizedY * -0.68 + normalizedZ * 0.39,
+          normalizedX * -0.66 + normalizedY * -0.72 + normalizedZ * 0.34,
         );
-        const diffuse = 0.12 + Math.pow(directional, 1.35) * 0.88;
-        const depthVisibility = 0.62 + depth * 0.38;
-        const backAttenuation = depth < 0.5 ? 0.48 + depth * 0.26 : 1;
+        const diffuse = 0.16 + Math.pow(directional, 1.42) * 0.84;
+        const depthVisibility = 0.56 + depth * 0.44;
+        const backAttenuation = depth < 0.5 ? 0.34 + depth * 0.3 : 1;
         const rim = Math.min(1, Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY));
-        const rimAccent = 1 + Math.pow(rim, 4) * 0.03;
+        const rimAccent = 1 + Math.pow(rim, 4) * 0.02;
         const alpha = Math.min(
-          0.34,
-          (0.028 + diffuse * 0.31) * depthVisibility * backAttenuation * point.intensity * rimAccent,
+          0.44,
+          (0.034 + diffuse * 0.42) * depthVisibility * backAttenuation * point.intensity * rimAccent,
         );
         const size = point.size * (0.78 + depth * 0.42) * scaleFactor;
         const level = alphaLevelFor(alpha);
@@ -191,8 +191,8 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
 
       if (highlights.length) {
         context.globalCompositeOperation = "lighter";
-        context.fillStyle = "#EAF4FF";
-        context.globalAlpha = 0.038;
+        context.fillStyle = "#F2F7FF";
+        context.globalAlpha = 0.085;
         context.beginPath();
 
         for (let index = 0; index < highlights.length; index += 3) {
@@ -248,8 +248,8 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
           radius * 1.12,
         );
         haloGradient.addColorStop(0, "rgba(4, 8, 22, 0)");
-        haloGradient.addColorStop(0.7, "rgba(53, 92, 145, 0.012)");
-        haloGradient.addColorStop(0.92, "rgba(102, 116, 217, 0.026)");
+        haloGradient.addColorStop(0.68, "rgba(53, 92, 145, 0.026)");
+        haloGradient.addColorStop(0.9, "rgba(102, 116, 217, 0.052)");
         haloGradient.addColorStop(1, "rgba(4, 8, 22, 0)");
         haloLeft = centerX - radius * 1.18;
         haloTop = centerY - radius * 1.18;

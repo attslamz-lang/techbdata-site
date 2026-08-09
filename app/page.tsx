@@ -1,67 +1,32 @@
 "use client";
 
 import { type CSSProperties, useEffect, useState } from "react";
-import { ContactFormatScene, ControlLoop, SourcesShowcase } from "./components/HomeProductScenes";
+import { ContactFormatScene, HowItWorksSection } from "./components/HomeProductScenes";
 import { MeshDriftBackground } from "./components/MeshDriftBackground";
 import { DataRailButton } from "./components/MotionPrimitives";
 import { ParticleSphere } from "./components/ParticleSphere";
 import { LeadForm, SiteFooter, SiteHeader, openLeadForm } from "./components/SiteChrome";
 
-const productSteps = [
-  {
-    title: "Вы описываете портрет клиента",
-    text: "Ниша, география и признаки нужного клиента. Если есть конкретные конкуренты — передаёте их список.",
-  },
-  {
-    title: "Мы настраиваем источники",
-    text: "Настраиваем выбранные сайты и номера и передаём контакты после посещения, звонка или SMS. Вам ничего не нужно подключать самостоятельно.",
-  },
-  {
-    title: "Передаём контакты в отдел продаж",
-    text: "Фиксируем нужное действие и передаём контакт напрямую менеджеру или сначала в колл-центр на квалификацию.",
-  },
-];
-
 const faqs = [
   {
-    question: "Какие данные получает менеджер?",
+    question: "Откуда берутся контакты и как обрабатываются данные?",
     answer:
-      "Без обзвона менеджер получает телефон, источник, совершённое действие и дату. После квалификации к карточке добавляются задача, комментарий оператора и запись разговора.",
+      "Контакты появляются после зафиксированных посещений выбранных сайтов, звонков и SMS по согласованным источникам. Конкретный сценарий и вопросы обработки данных уточняем до запуска проекта; политика обработки персональных данных опубликована внизу страницы.",
   },
   {
-    question: "Откуда берутся контакты?",
+    question: "Чем techbdata отличается от базы, парсера и обычной рекламы?",
     answer:
-      "Учитываем посещения выбранных сайтов и страниц, звонки конкурентам, а также входящие и исходящие SMS по выбранным номерам.",
+      "Это не готовый статичный список: источники настраиваются под портрет вашего клиента, а контакты появляются после конкретных действий. В отличие от обычной рекламы, вы платите за переданные контакты, а не за показы и клики.",
   },
   {
-    question: "Можно ли передать собственный список конкурентов?",
+    question: "Что получает менеджер и чем отличаются форматы?",
     answer:
-      "Да. Вы можете передать список конкретных компаний. Если списка нет, команда techbdata подберёт подходящие сайты и номера по согласованным критериям.",
+      "Без обзвона менеджер получает телефон, источник, совершённое действие и дату. После квалификации к карточке добавляются задача, готовность к разговору, комментарий оператора и запись разговора.",
   },
   {
-    question: "Чем это отличается от покупки готовой базы?",
+    question: "Сколько стоит запуск и что требуется от клиента?",
     answer:
-      "Мы настраиваем источники под портрет вашего клиента. Контакты появляются после конкретных действий, а не приходят готовым статичным списком.",
-  },
-  {
-    question: "Как контролируется качество?",
-    answer:
-      "Команда techbdata анализирует обратную связь вашего отдела продаж, тестирует новые источники, продолжает работу со стабильными и заменяет слабые.",
-  },
-  {
-    question: "Что входит в квалификацию?",
-    answer:
-      "Колл-центр уточняет соответствие согласованным критериям, актуальность задачи и готовность продолжить разговор. Менеджер получает комментарий оператора и запись разговора.",
-  },
-  {
-    question: "Как контакты передаются отделу продаж?",
-    answer:
-      "Формат передачи согласовывается при настройке проекта. Контакты могут поступать напрямую вашему отделу продаж либо после квалификации колл-центром.",
-  },
-  {
-    question: "От чего зависит стоимость?",
-    answer:
-      "На расчёт влияют параметры аудитории, выбранные источники, необходимый объём и критерии квалификации.",
+      "Для старта нужны портрет клиента, география и, если есть, список конкурентов. Контакты без обзвона стоят 40–60 ₽, после квалификации — 70–110 ₽; точный расчёт зависит от аудитории, источников, объёма и критериев квалификации.",
   },
 ];
 
@@ -154,22 +119,20 @@ export default function HomePage() {
 
           <div className="hero-shell">
             <div className="hero-copy">
-              <span className="hero-kicker">Контакты аудитории вашей ниши</span>
               <h1 aria-label="Получайте контакты клиентов ваших конкурентов">
                 <span>Получайте контакты клиентов</span>
                 <span>ваших конкурентов</span>
               </h1>
               <p className="hero-description">
-                Клиенты вашей ниши посещают сайты конкурентов, звонят и взаимодействуют с выбранными источниками.
-                techbdata фиксирует эти действия и передаёт контакты вашему отделу продаж — напрямую или после квалификации.
+                Получаем контакты после посещений выбранных сайтов, звонков и SMS. Передаём менеджерам напрямую или после квалификации.
               </p>
               <div className="hero-actions">
                 <DataRailButton onClick={() => openLeadForm()}>
-                  Рассчитать стоимость контактов
+                  Получить расчёт
                 </DataRailButton>
-                <DataRailButton variant="secondary" href="#result-example">
-                  Посмотреть пример результата
-                </DataRailButton>
+                <a className="hero-result-link" href="#result-example">
+                  Смотреть пример контакта <span aria-hidden="true">↓</span>
+                </a>
               </div>
               <div className="hero-trust" aria-label="Подтверждения">
                 <span><b aria-hidden="true">✓</b> Резидент «Сколково»</span>
@@ -178,11 +141,11 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="hero-visual-composition">
-              <div className="hero-sphere-layer" aria-hidden="true">
-                <ParticleSphere className="hero-particle-sphere" />
-              </div>
+            <div className="hero-sphere-layer" aria-hidden="true">
+              <ParticleSphere className="hero-particle-sphere" />
+            </div>
 
+            <div className="hero-visual-composition">
               <svg
                 className="hero-sphere-signal"
                 viewBox="0 0 680 520"
@@ -197,19 +160,18 @@ export default function HomePage() {
               <div className="hero-product-scene" aria-label="Путь контакта от источника до менеджера">
                 <div className="hero-scene-bar">
                   <span>techbdata · поток контактов</span>
-                  <span className="live-state"><i /> Система активна</span>
+                  <span className="live-state"><i /> Активно</span>
                 </div>
                 <div className="hero-scene-body">
                 <div className="hero-stage hero-stage-source">
                   <span className="stage-label">Источник</span>
                   <div className="source-browser-mini">
                     <span className="browser-dots" />
-                    <strong>Сайт компании вашей ниши</strong>
-                    <span>Раздел услуги</span>
+                    <strong>Сайт конкурента</strong>
                   </div>
                   <div className="source-call-mini">
                     <span className="phone-icon">☎</span>
-                    <div><strong>Отдел продаж</strong><span>Входящий звонок</span></div>
+                    <div><strong>Выбранный номер</strong></div>
                   </div>
                 </div>
 
@@ -217,8 +179,7 @@ export default function HomePage() {
 
                 <div className="hero-stage hero-stage-action">
                   <span className="stage-label">Действие</span>
-                  <strong>Интерес зафиксирован</strong>
-                  <span>Источник сопоставлен</span>
+                  <strong>Действие клиента</strong>
                 </div>
 
                 <div className="hero-flow-track" aria-hidden="true"><span /></div>
@@ -226,7 +187,7 @@ export default function HomePage() {
                 <div className="hero-stage hero-stage-contact">
                   <span className="stage-label">Контакт</span>
                   <div className="contact-avatar">А</div>
-                  <div><strong>+7 977 *** 19 01</strong><span>Данные добавлены</span></div>
+                  <div><strong>+7 977 *** 19 01</strong></div>
                 </div>
 
                 <div className="hero-flow-track" aria-hidden="true"><span /></div>
@@ -234,7 +195,6 @@ export default function HomePage() {
                 <div className="hero-stage hero-stage-manager">
                   <span className="stage-label">Менеджер</span>
                   <strong>Готово к звонку</strong>
-                  <span>Карточка в отделе продаж</span>
                 </div>
                 </div>
               </div>
@@ -242,51 +202,45 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="section logic-section" id="mechanics">
-          <div className="section-shell">
-            <div className="section-heading logic-heading">
-              <span className="eyebrow">Логика продукта</span>
-              <h2>Конкуренты вкладываются в рекламу, а их трафиком пользуетесь вы</h2>
+        <ContactFormatScene onLead={() => openLeadForm()} />
+
+        <HowItWorksSection />
+
+        <section className="section trust-quality-section" id="quality">
+          <div className="section-shell trust-quality-shell">
+            <div className="trust-quality-copy">
+              <span className="eyebrow">Доверие и качество</span>
+              <h2>Источники остаются под контролем</h2>
               <p>
-                Опишите портрет клиента — мы подберём источники, настроим кабинет и передадим контакты вашему отделу продаж.
+                Вы описываете портрет клиента. Мы настраиваем источники и смотрим обратную связь отдела продаж. Слабые источники отключаем или корректируем.
               </p>
             </div>
 
-            <div className="editorial-steps" data-reveal>
-              <div className="editorial-data-line" aria-hidden="true"><span /></div>
-              {productSteps.map((step, index) => (
-                <article className="editorial-step" key={step.title} style={{ "--step-index": index } as CSSProperties}>
-                  <span className="editorial-step-number" aria-hidden="true">0{index + 1}</span>
-                  <h3>{step.title}</h3>
-                  <p>{step.text}</p>
-                </article>
-              ))}
+            <div className="trust-proof-list" aria-label="Подтверждения и реквизиты">
+              <div><span>Статус</span><strong>Резидент «Сколково»</strong></div>
+              <div><span>Продукт</span><strong>ПО включено в реестр Минцифры</strong></div>
+              <div>
+                <span>Компания</span>
+                <strong>ИП ПЕТРОВ СТАНИСЛАВ СЕРГЕЕВИЧ</strong>
+                <small>ИНН 211485388853 · ОГРНИП 322213000040850</small>
+              </div>
             </div>
 
-            <div className="logic-accent">
-              <span>Платите за контакты, а не за показы и клики.</span>
-              <DataRailButton variant="secondary" onClick={() => openLeadForm()}>Обсудить вашу аудиторию</DataRailButton>
-            </div>
+            <p className="trust-data-note">
+              Контакты появляются после действий по согласованным сайтам и номерам. Конкретный сценарий и вопросы обработки данных уточняем до запуска проекта.
+            </p>
           </div>
         </section>
-
-        <SourcesShowcase />
-
-        <ContactFormatScene onLead={() => openLeadForm()} />
-
-        <ControlLoop />
 
         <section className="section pricing-section" id="tariffs">
           <div className="section-shell">
             <div className="section-heading pricing-heading">
               <span className="eyebrow">Стоимость</span>
-              <h2>Стоимость контакта зависит от формата и параметров проекта</h2>
+              <h2>Стоимость контактов</h2>
               <p>
-                На расчёт влияют аудитория, выбранные источники, необходимый объём и критерии квалификации.
+                Точный расчёт зависит от аудитории, источников, объёма и критериев квалификации.
               </p>
             </div>
-
-            <CplCalculator />
 
             <div className="pricing-stage" data-reveal>
               <article className="price-option">
@@ -309,10 +263,17 @@ export default function HomePage() {
                 <span>Расчёт под вашу нишу</span>
                 <p>Уточним параметры аудитории и предложим подходящий формат.</p>
                 <DataRailButton onClick={() => openLeadForm()}>
-                  Получить расчёт под свою нишу
+                  Получить расчёт
                 </DataRailButton>
               </div>
             </div>
+
+            <div className="cpl-secondary-heading">
+              <span>Сравнение</span>
+              <h3>Хотите сравнить с текущим CPL?</h3>
+              <p>Укажите стоимость лида в вашем бизнесе — калькулятор покажет ориентир для сравнения.</p>
+            </div>
+            <CplCalculator />
           </div>
         </section>
 
@@ -321,7 +282,7 @@ export default function HomePage() {
             <div className="faq-heading">
               <span className="eyebrow">FAQ</span>
               <h2>Вопросы о продукте</h2>
-              <p>Коротко о данных, настройке проекта, качестве и стоимости.</p>
+              <p>Коротко о данных, форматах, стоимости и запуске.</p>
             </div>
             <div className="faq-list">
               {faqs.map((item) => (
@@ -340,11 +301,6 @@ export default function HomePage() {
               <span className="eyebrow">Следующий шаг</span>
               <h2>Получите расчёт под вашу целевую аудиторию</h2>
               <p>Уточним нишу, подходящие источники и формат получения контактов.</p>
-              <div className="contact-notes">
-                <span>Аудитория и география</span>
-                <span>Подходящие источники</span>
-                <span>Формат получения контактов</span>
-              </div>
             </div>
             <div className="contact-form-panel">
               <LeadForm className="inline-lead-form" />

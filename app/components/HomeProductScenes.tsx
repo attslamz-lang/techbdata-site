@@ -34,7 +34,7 @@ function SourceBrowserScene() {
         <p>Клиент открывает сайт конкурента и изучает конкретную услугу.</p>
       </div>
 
-      <InteractiveSurface className="browser-surface" aria-label="Сцена посещения сайта и появления контакта">
+      <InteractiveSurface className="browser-surface" aria-label="Сцена посещения выбранной страницы">
         <motion.div
           className="browser-product-window interactive-surface-layer"
           variants={{ idle: { opacity: 0.78, x: -8 }, complete: { opacity: 1, x: 0, transition: { duration: 0.26 } } }}
@@ -63,33 +63,6 @@ function SourceBrowserScene() {
           </div>
         </motion.div>
 
-        <div className="browser-data-bridge" aria-hidden="true">
-          <motion.i
-            variants={{
-              idle: { scaleX: 0, opacity: 0 },
-              complete: { scaleX: 1, opacity: 1, transition: { duration: 0.24, delay: 0.38, ease: easeOut } },
-            }}
-          />
-          <motion.span
-            variants={{
-              idle: { x: -28, opacity: 0 },
-              complete: { x: 0, opacity: 1, transition: { duration: 0.24, delay: 0.48, ease: easeOut } },
-            }}
-          >data</motion.span>
-        </div>
-
-        <motion.aside
-          className="source-result-rail"
-          variants={{
-            idle: { opacity: 0.28, x: 14 },
-            complete: { opacity: 1, x: 0, transition: { duration: 0.28, delay: 0.5, ease: easeOut } },
-          }}
-        >
-          <span>Контакт</span>
-          <strong>+7 977 *** 19 01</strong>
-          <small>Страница услуги</small>
-          <b><i /> Добавлен в кабинет</b>
-        </motion.aside>
       </InteractiveSurface>
     </motion.article>
   );
@@ -112,10 +85,10 @@ function SourceCallScene() {
       <div className="source-product-copy">
         <span className="source-product-index">Звонок</span>
         <h3>Звонок на номер конкурента</h3>
-        <p>Фиксируем звонок на выбранный номер и добавляем контакт в кабинет.</p>
+        <p>Клиент звонит на выбранный номер конкурента.</p>
       </div>
 
-      <InteractiveSurface className="call-surface" aria-label="Сцена звонка и добавления контакта">
+      <InteractiveSurface className="call-surface" aria-label="Сцена звонка на выбранный номер">
         <div className="call-connection interactive-surface-layer">
           <div className="call-number-block">
             <span>Выбранный номер</span>
@@ -151,17 +124,6 @@ function SourceCallScene() {
           ))}
         </div>
 
-        <motion.div
-          className="call-contact-slot"
-          initial={reducedMotion ? false : { opacity: 0.28, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.28, delay: reducedMotion ? 0 : 0.58, ease: easeOut }}
-        >
-          <span>Контакт</span>
-          <strong>+7 977 *** 19 01</strong>
-          <b><i /> Добавлен в кабинет</b>
-        </motion.div>
       </InteractiveSurface>
     </motion.article>
   );
@@ -184,10 +146,10 @@ function SourceSmsScene() {
       <div className="source-product-copy">
         <span className="source-product-index">SMS</span>
         <h3>Диалог по выбранному номеру</h3>
-        <p>Учитываем входящие и исходящие SMS по выбранным номерам.</p>
+        <p>Входящее или исходящее SMS по выбранному номеру.</p>
       </div>
 
-      <InteractiveSurface className="sms-surface" aria-label="Сцена SMS-диалога и появления контакта">
+      <InteractiveSurface className="sms-surface" aria-label="Сцена SMS-диалога по выбранному номеру">
         <div className="sms-dialogue">
           <div className="sms-number"><span>Диалог</span><strong>+7 495 120-**-42</strong></div>
           <motion.div
@@ -207,38 +169,100 @@ function SourceSmsScene() {
           ><i /> Ответ получен</motion.div>
         </div>
 
-        <motion.aside
-          className="sms-contact-drawer"
-          variants={{
-            idle: { opacity: 0.2, clipPath: "inset(0 0 0 100%)" },
-            complete: { opacity: 1, clipPath: "inset(0 0 0 0%)", transition: { duration: 0.3, delay: 0.56, ease: easeOut } },
-          }}
-        >
-          <span>Новый контакт</span>
-          <strong>+7 977 *** 19 01</strong>
-          <small>Ответное SMS</small>
-          <b><i /> В кабинете</b>
-        </motion.aside>
       </InteractiveSurface>
     </motion.article>
   );
 }
 
-export function SourcesShowcase() {
+const howSteps = [
+  {
+    title: "Согласовываем портрет и источники",
+    text: "Вы описываете портрет клиента, географию и критерии. Вместе выбираем сайты, номера и SMS-источники.",
+  },
+  {
+    title: "Фиксируем нужные действия",
+    text: "Учитываем посещение выбранной страницы, звонок или SMS по согласованному источнику.",
+  },
+  {
+    title: "Передаём контакт менеджеру",
+    text: "Контакт поступает напрямую в отдел продаж или сначала проходит квалификацию.",
+  },
+];
+
+const sourceTabs = [
+  { key: "site", label: "Сайт", Scene: SourceBrowserScene },
+  { key: "call", label: "Звонок", Scene: SourceCallScene },
+  { key: "sms", label: "SMS", Scene: SourceSmsScene },
+] as const;
+
+export function HowItWorksSection() {
+  const [source, setSource] = useState<(typeof sourceTabs)[number]["key"]>("site");
+  const reducedMotion = useReducedMotion();
+  const activeSource = sourceTabs.find((item) => item.key === source) ?? sourceTabs[0];
+  const ActiveScene = activeSource.Scene;
+
   return (
-    <section className="section sources-section sources-redesign" id="sources">
+    <section className="section how-section" id="mechanics">
       <div className="section-shell">
-        <div className="section-heading section-heading-centered source-redesign-heading">
-          <span className="eyebrow">Источники контактов</span>
-          <h2>Контакты из сайтов, звонков и SMS</h2>
-          <p>Клиенты посещают выбранные сайты конкурентов, звонят на их номера или отправляют SMS.</p>
+        <div className="section-heading how-heading">
+          <span className="eyebrow">Механика</span>
+          <h2>Как это работает</h2>
+          <p>Один короткий путь от согласованного действия до контакта в отделе продаж.</p>
         </div>
 
-        <div className="source-product-stack">
-          <SourceBrowserScene />
-          <div className="source-product-pair">
-            <SourceCallScene />
-            <SourceSmsScene />
+        <div className="editorial-steps how-steps" data-reveal>
+          <div className="editorial-data-line" aria-hidden="true"><span /></div>
+          {howSteps.map((step, index) => (
+            <article className="editorial-step" key={step.title} style={{ "--step-index": index } as CSSProperties}>
+              <span className="editorial-step-number" aria-hidden="true">0{index + 1}</span>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="source-switcher" data-reveal>
+          <div className="source-switcher-heading">
+            <div>
+              <span>Источники</span>
+              <h3>Сайт, звонок или SMS</h3>
+            </div>
+            <div className="source-tabs" role="tablist" aria-label="Источник контакта">
+              {sourceTabs.map((item) => (
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={source === item.key}
+                  aria-controls="source-live-panel"
+                  key={item.key}
+                  onClick={() => setSource(item.key)}
+                >
+                  {source === item.key && (
+                    <motion.span
+                      className="source-tab-active"
+                      layoutId="source-tab"
+                      transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    />
+                  )}
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="source-live-panel" id="source-live-panel" role="tabpanel">
+            <AnimatePresence initial={false} mode="wait">
+              <motion.div
+                className="source-switch-scene"
+                key={source}
+                initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: reducedMotion ? 0 : 0.24, ease: easeOut }}
+              >
+                <ActiveScene />
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </div>
@@ -261,10 +285,10 @@ export function ContactFormatScene({ onLead }: ContactFormatSceneProps) {
       <div className="section-shell">
         <div className="section-heading section-heading-split contact-format-heading">
           <div>
-            <span className="eyebrow">Два формата · один кабинет</span>
-            <h2>Получайте контакты напрямую или после квалификации</h2>
+            <span className="eyebrow">Результат</span>
+            <h2>Что получает менеджер</h2>
           </div>
-          <p>Переключите формат: базовая карточка остаётся той же, а после звонка колл-центра в ней появляется больше данных.</p>
+          <p>Без обзвона — контакт и исходные данные. После квалификации — задача, готовность к разговору, комментарий и запись.</p>
         </div>
 
         <InteractiveSurface className={`contact-live-surface ${qualified ? "is-qualified" : "is-direct"}`}>
@@ -356,96 +380,8 @@ export function ContactFormatScene({ onLead }: ContactFormatSceneProps) {
         </InteractiveSurface>
 
         <div className="contact-format-action">
-          <DataRailButton onClick={onLead}>Подобрать формат под вашу задачу</DataRailButton>
+          <DataRailButton onClick={onLead}>Подобрать формат</DataRailButton>
         </div>
-      </div>
-    </section>
-  );
-}
-
-const controlStages = [
-  { key: "portrait", label: "Портрет клиента", detail: "Ниша · география · критерии" },
-  { key: "sources", label: "Источники", detail: "Сайты · номера · SMS" },
-  { key: "contacts", label: "Первые контакты", detail: "Поступают в отдел продаж" },
-  { key: "feedback", label: "Обратная связь", detail: "Продажи отмечают качество" },
-  { key: "adjustment", label: "Корректировка", detail: "Слабые меняем, сильные оставляем" },
-];
-
-export function ControlLoop() {
-  const reducedMotion = useReducedMotion();
-
-  return (
-    <section className="section control-loop-section" id="quality">
-      <span className="section-anchor" id="launch" aria-hidden="true" />
-      <div className="section-shell">
-        <div className="control-loop-heading">
-          <div>
-            <span className="eyebrow">Запуск и контроль качества</span>
-            <h2>Настройка продолжается после первых контактов</h2>
-          </div>
-          <p>Вы описываете портрет клиента. Мы настраиваем источники, запускаем получение контактов и смотрим обратную связь отдела продаж. Если источник даёт слабый результат — меняем настройки и перераспределяем работу.</p>
-        </div>
-
-        <InteractiveSurface className="control-loop-surface" aria-label="Цикл настройки и контроля источников">
-          <svg className="control-loop-paths" viewBox="0 0 1000 260" preserveAspectRatio="none" aria-hidden="true">
-            <defs>
-              <marker id="loop-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" />
-              </marker>
-            </defs>
-            <motion.path
-              className="control-path-main"
-              d="M 70 98 C 230 98, 270 98, 430 98 S 720 98, 930 98"
-              initial={reducedMotion ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0.28 }}
-              whileInView={{ pathLength: 1, opacity: 1 }}
-              viewport={{ once: true, amount: 0.45 }}
-              transition={{ duration: reducedMotion ? 0 : 0.78, ease: easeOut }}
-              markerEnd="url(#loop-arrow)"
-            />
-            <motion.path
-              className="control-path-feedback"
-              d="M 930 150 C 820 235, 430 235, 270 152"
-              initial={reducedMotion ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-              whileInView={{ pathLength: 1, opacity: 1 }}
-              viewport={{ once: true, amount: 0.45 }}
-              transition={{ duration: reducedMotion ? 0 : 0.6, delay: reducedMotion ? 0 : 0.72, ease: easeOut }}
-              markerEnd="url(#loop-arrow)"
-            />
-          </svg>
-
-          <div className="control-loop-stages">
-            {controlStages.map((stage, index) => (
-              <motion.div
-                className={`control-stage control-stage-${stage.key}`}
-                key={stage.key}
-                initial={reducedMotion ? false : { opacity: 0.48, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.45 }}
-                transition={{ duration: reducedMotion ? 0 : 0.26, delay: reducedMotion ? 0 : 0.08 + index * 0.08, ease: easeOut }}
-              >
-                <span>{stage.label}</span>
-                <strong>{stage.detail}</strong>
-                {stage.key === "sources" && (
-                  <div className="control-source-states">
-                    <motion.i initial={false} whileInView={{ scale: reducedMotion ? 1 : [1, 1.04, 1] }} viewport={{ once: true }} transition={{ duration: 0.32, delay: 1.24 }}>Активен</motion.i>
-                    <i>Проверяем</i>
-                    <motion.i initial={false} whileInView={{ opacity: reducedMotion ? 0.48 : [1, 0.48] }} viewport={{ once: true }} transition={{ duration: 0.28, delay: 1.28 }}>Отключён</motion.i>
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            className="control-loop-feedback-note"
-            initial={reducedMotion ? false : { opacity: 0, x: 14 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.45 }}
-            transition={{ duration: reducedMotion ? 0 : 0.28, delay: reducedMotion ? 0 : 1.02, ease: easeOut }}
-          >
-            Обратная связь возвращается к источникам
-          </motion.div>
-        </InteractiveSurface>
       </div>
     </section>
   );
