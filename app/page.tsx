@@ -189,8 +189,8 @@ export default function HomePage() {
                 preserveAspectRatio="none"
                 aria-hidden="true"
               >
-                <path pathLength="1" d="M 574 146 C 536 182, 504 242, 427 334" />
-                <circle className="hero-signal-origin" cx="574" cy="146" r="4" />
+                <path pathLength="1" d="M 24 244 C 132 246, 258 292, 427 334" />
+                <circle className="hero-signal-origin" cx="24" cy="244" r="4" />
                 <circle className="hero-signal-contact" cx="427" cy="334" r="4" />
               </svg>
 

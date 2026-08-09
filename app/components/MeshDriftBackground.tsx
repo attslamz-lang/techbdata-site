@@ -420,16 +420,17 @@ export function MeshDriftBackground() {
     };
 
     gl.uniform3fv(uniforms.colors, COLORS);
-    gl.uniform4f(uniforms.shape, 1.1, 0.34, 0.5, 0.0);
+    gl.uniform4f(uniforms.shape, 1.1, 0.42, 0.5, 0.0);
     gl.uniform4f(uniforms.surface, 2.4, 0.96, -0.1, 0.96);
     gl.uniform4f(uniforms.finish, 0.0, 0.36, 0.026, 0.07);
-    gl.uniform4f(uniforms.transform, 1453.0, 0.0, 0.0, 0.0);
+    gl.uniform4f(uniforms.transform, 1453.0, 0.0, 0.055, 0.0);
     gl.uniform4f(uniforms.space, 0.0, 0.0, 0.0, 0.0);
     gl.uniform4f(uniforms.cursor, 0.0, 2.0, 0.65, 0.46);
 
     let frameId: number | null = null;
     let startedAt = 0;
     let elapsedSeconds = 0;
+    let motionSpeed = 0.98;
     let isNearViewport = true;
     let disposed = false;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -440,7 +441,7 @@ export function MeshDriftBackground() {
         uniforms.scene,
         canvas.width,
         canvas.height,
-        seconds * 0.73,
+        seconds * motionSpeed,
         4.0,
       );
       gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -448,6 +449,10 @@ export function MeshDriftBackground() {
 
     const resize = () => {
       const bounds = host.getBoundingClientRect();
+      const compactLayout = bounds.width <= 760;
+      motionSpeed = compactLayout ? 0.73 : 0.98;
+      gl.uniform4f(uniforms.shape, 1.1, compactLayout ? 0.34 : 0.42, 0.5, 0.0);
+      gl.uniform4f(uniforms.transform, 1453.0, 0.0, compactLayout ? 0.0 : 0.055, 0.0);
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const width = Math.max(1, Math.round(bounds.width * dpr));
       const height = Math.max(1, Math.round(bounds.height * dpr));

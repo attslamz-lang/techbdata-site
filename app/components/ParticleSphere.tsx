@@ -24,7 +24,7 @@ const TARGET_FRAME_MS = 1000 / 30;
 const DPR_CAP = 1.5;
 const MAX_CANVAS_PIXELS = 1_050_000;
 const ALPHA_LEVELS = [0.018, 0.032, 0.052, 0.078, 0.11, 0.155, 0.22, 0.34];
-const PARTICLE_TONES = ["#416FAE", "#55BED2", "#6D63C7", "#EAF4FF"];
+const PARTICLE_TONES = ["#355C91", "#416FAE", "#6674D9", "#58B8CF", "#EAF4FF"];
 
 function noise(index: number, offset = 0) {
   const value = Math.sin((index + 1) * 12.9898 + offset * 78.233) * 43_758.5453;
@@ -46,8 +46,8 @@ function createSpherePoints(count: number): SpherePoint[] {
       radius,
       size: 0.42 + noise(index, 3) * 0.58,
       intensity: 0.78 + noise(index, 4) * 0.2,
-      tone: toneSeed < 0.74 ? 0 : toneSeed < 0.91 ? 1 : toneSeed < 0.97 ? 2 : 3,
-      highlight: noise(index, 5) > 0.983,
+      tone: toneSeed < 0.38 ? 0 : toneSeed < 0.62 ? 1 : toneSeed < 0.85 ? 2 : toneSeed < 0.975 ? 3 : 4,
+      highlight: noise(index, 5) > 0.987,
     };
   });
 }
@@ -143,16 +143,16 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
         const screenY = centerY + rotatedY * radius * perspective;
         const directional = Math.max(
           0,
-          normalizedX * -0.56 + normalizedY * -0.72 + normalizedZ * 0.41,
+          normalizedX * -0.62 + normalizedY * -0.68 + normalizedZ * 0.39,
         );
-        const diffuse = 0.17 + Math.pow(directional, 1.15) * 0.83;
-        const depthVisibility = 0.72 + depth * 0.28;
-        const backAttenuation = depth < 0.5 ? 0.65 + depth * 0.2 : 1;
+        const diffuse = 0.12 + Math.pow(directional, 1.35) * 0.88;
+        const depthVisibility = 0.62 + depth * 0.38;
+        const backAttenuation = depth < 0.5 ? 0.48 + depth * 0.26 : 1;
         const rim = Math.min(1, Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY));
-        const rimAccent = 1 + Math.pow(rim, 4) * 0.08;
+        const rimAccent = 1 + Math.pow(rim, 4) * 0.03;
         const alpha = Math.min(
           0.34,
-          (0.035 + diffuse * 0.285) * depthVisibility * backAttenuation * point.intensity * rimAccent,
+          (0.028 + diffuse * 0.31) * depthVisibility * backAttenuation * point.intensity * rimAccent,
         );
         const size = point.size * (0.78 + depth * 0.42) * scaleFactor;
         const level = alphaLevelFor(alpha);
@@ -160,8 +160,8 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
 
         bucket.push(screenX, screenY, size);
 
-        if (point.highlight && depth > 0.52 && directional > 0.18) {
-          highlights.push(screenX, screenY, size * (1.35 + depth * 0.22));
+        if (point.highlight && depth > 0.56 && directional > 0.38) {
+          highlights.push(screenX, screenY, size * (1.28 + depth * 0.18));
         }
       }
 
@@ -192,7 +192,7 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
       if (highlights.length) {
         context.globalCompositeOperation = "lighter";
         context.fillStyle = "#EAF4FF";
-        context.globalAlpha = 0.045;
+        context.globalAlpha = 0.038;
         context.beginPath();
 
         for (let index = 0; index < highlights.length; index += 3) {
@@ -248,8 +248,8 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
           radius * 1.12,
         );
         haloGradient.addColorStop(0, "rgba(4, 8, 22, 0)");
-        haloGradient.addColorStop(0.7, "rgba(34, 78, 145, 0.012)");
-        haloGradient.addColorStop(0.92, "rgba(65, 111, 174, 0.023)");
+        haloGradient.addColorStop(0.7, "rgba(53, 92, 145, 0.012)");
+        haloGradient.addColorStop(0.92, "rgba(102, 116, 217, 0.026)");
         haloGradient.addColorStop(1, "rgba(4, 8, 22, 0)");
         haloLeft = centerX - radius * 1.18;
         haloTop = centerY - radius * 1.18;
