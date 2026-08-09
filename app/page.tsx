@@ -4,6 +4,7 @@ import { type CSSProperties, useEffect, useState } from "react";
 import { ContactFormatScene, ControlLoop, SourcesShowcase } from "./components/HomeProductScenes";
 import { MeshDriftBackground } from "./components/MeshDriftBackground";
 import { DataRailButton } from "./components/MotionPrimitives";
+import { ParticleSphere } from "./components/ParticleSphere";
 import { LeadForm, SiteFooter, SiteHeader, openLeadForm } from "./components/SiteChrome";
 
 const productSteps = [
@@ -257,6 +258,15 @@ export default function HomePage() {
         <ContactFormatScene onLead={() => openLeadForm()} />
 
         <ControlLoop />
+
+        <section className="section sphere-preview-section" aria-label="Предварительный просмотр Particle Sphere">
+          <div className="section-shell sphere-preview-shell">
+            <span className="sphere-preview-caption" aria-hidden="true">Particle sphere · preview</span>
+            <div className="sphere-preview-stage">
+              <ParticleSphere className="sphere-preview-object" />
+            </div>
+          </div>
+        </section>
 
         <section className="section pricing-section" id="tariffs">
           <div className="section-shell">
