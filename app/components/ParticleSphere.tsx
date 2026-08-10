@@ -25,7 +25,8 @@ const INTRO_FAST_MS = 820;
 const INTRO_DECELERATION_MS = 1_580;
 const DPR_CAP = 1.5;
 const MAX_CANVAS_PIXELS = 1_050_000;
-const ALPHA_LEVELS = [0.024, 0.046, 0.074, 0.112, 0.16, 0.225, 0.32, 0.46];
+const DEPTH_LAYERS = 4;
+const ALPHA_LEVELS = [0.012, 0.026, 0.052, 0.09, 0.145, 0.22, 0.34, 0.5];
 const PARTICLE_TONES = ["#355C91", "#416FAE", "#6674D9", "#776EF0", "#58B8CF", "#DCEBFF"];
 
 function noise(index: number, offset = 0) {
@@ -49,7 +50,7 @@ function createSpherePoints(count: number): SpherePoint[] {
       size: 0.46 + noise(index, 3) * 0.62,
       intensity: 0.82 + noise(index, 4) * 0.18,
       tone: toneSeed < 0.44 ? 0 : toneSeed < 0.7 ? 1 : toneSeed < 0.87 ? 2 : toneSeed < 0.93 ? 3 : toneSeed < 0.985 ? 4 : 5,
-      highlight: noise(index, 5) > 0.992,
+      highlight: noise(index, 5) > 0.978,
     };
   });
 }
@@ -110,7 +111,7 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
     let haloSize = 0;
 
     const buckets = Array.from(
-      { length: PARTICLE_TONES.length * ALPHA_LEVELS.length },
+      { length: DEPTH_LAYERS * PARTICLE_TONES.length * ALPHA_LEVELS.length },
       () => [] as number[],
     );
     const highlights: number[] = [];
@@ -155,59 +156,72 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
         const perspective = cameraDistance / (cameraDistance - depthZ);
         const screenX = centerX + rotatedX * radius * perspective;
         const screenY = centerY + rotatedY * radius * perspective;
-        const directional = Math.max(
+        const directionalLight = Math.max(
           0,
-          normalizedX * 0.5 + normalizedY * -0.76 + normalizedZ * 0.42,
+          normalizedX * 0.48 + normalizedY * -0.74 + normalizedZ * 0.47,
         );
-        const diffuse = 0.15 + Math.pow(directional, 1.36) * 0.94;
-        const depthVisibility = 0.56 + depth * 0.44;
-        const backAttenuation = depth < 0.5 ? 0.34 + depth * 0.3 : 1;
-        const frontBoost = depth > 0.5 ? 1 + ((depth - 0.5) / 0.5) * 0.34 : 1;
+        const diffuse = 0.08 + Math.pow(directionalLight, 1.48) * 0.88;
+        const frontDepth = Math.max(0, Math.min(1, (depth - 0.5) * 2));
+        const frontCurve = frontDepth * frontDepth * (3 - 2 * frontDepth);
+        const backDepth = Math.max(0, Math.min(1, depth * 2));
+        const hemisphereVisibility = depth < 0.5
+          ? 0.1 + backDepth * 0.16
+          : 0.72 + frontCurve * 0.48;
+        const facePresence = depth < 0.5
+          ? 1
+          : 0.78 + Math.max(0, normalizedZ) * 0.34;
         const rim = Math.min(1, Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY));
-        const rimAccent = 1 + Math.pow(rim, 4) * 0.006;
+        const rimAccent = 1 + Math.pow(rim, 5) * 0.01;
         const alpha = Math.min(
-          0.48,
-          (0.032 + diffuse * 0.43) * depthVisibility * backAttenuation * frontBoost * point.intensity * rimAccent,
+          0.52,
+          (0.025 + diffuse * 0.39) * hemisphereVisibility * facePresence * point.intensity * rimAccent,
         );
-        const size = point.size * (0.78 + depth * 0.42) * scaleFactor * 1.12;
+        const size = point.size * (0.62 + depth * 0.84) * scaleFactor * 1.12;
         const level = alphaLevelFor(alpha);
-        const bucket = buckets[point.tone * ALPHA_LEVELS.length + level];
+        const depthLayer = Math.min(DEPTH_LAYERS - 1, Math.floor(depth * DEPTH_LAYERS));
+        const bucketIndex =
+          (depthLayer * PARTICLE_TONES.length + point.tone) * ALPHA_LEVELS.length + level;
+        const bucket = buckets[bucketIndex];
 
         bucket.push(screenX, screenY, size);
 
-        if (point.highlight && depth > 0.56 && directional > 0.38) {
-          highlights.push(screenX, screenY, size * (1.28 + depth * 0.18));
+        if (point.highlight && depth > 0.62 && directionalLight > 0.34) {
+          highlights.push(screenX, screenY, size * (1.12 + depth * 0.14));
         }
       }
 
       context.save();
       context.globalCompositeOperation = "source-over";
 
-      for (let toneIndex = 0; toneIndex < PARTICLE_TONES.length; toneIndex += 1) {
-        for (let alphaIndex = 0; alphaIndex < ALPHA_LEVELS.length; alphaIndex += 1) {
-          const bucket = buckets[toneIndex * ALPHA_LEVELS.length + alphaIndex];
-          if (!bucket.length) continue;
+      for (let depthLayer = 0; depthLayer < DEPTH_LAYERS; depthLayer += 1) {
+        for (let toneIndex = 0; toneIndex < PARTICLE_TONES.length; toneIndex += 1) {
+          for (let alphaIndex = 0; alphaIndex < ALPHA_LEVELS.length; alphaIndex += 1) {
+            const bucketIndex =
+              (depthLayer * PARTICLE_TONES.length + toneIndex) * ALPHA_LEVELS.length + alphaIndex;
+            const bucket = buckets[bucketIndex];
+            if (!bucket.length) continue;
 
-          context.beginPath();
-          context.fillStyle = PARTICLE_TONES[toneIndex];
-          context.globalAlpha = ALPHA_LEVELS[alphaIndex];
+            context.beginPath();
+            context.fillStyle = PARTICLE_TONES[toneIndex];
+            context.globalAlpha = ALPHA_LEVELS[alphaIndex];
 
-          for (let index = 0; index < bucket.length; index += 3) {
-            const x = bucket[index];
-            const y = bucket[index + 1];
-            const size = bucket[index + 2];
-            context.moveTo(x + size, y);
-            context.arc(x, y, size, 0, TAU);
+            for (let index = 0; index < bucket.length; index += 3) {
+              const x = bucket[index];
+              const y = bucket[index + 1];
+              const size = bucket[index + 2];
+              context.moveTo(x + size, y);
+              context.arc(x, y, size, 0, TAU);
+            }
+
+            context.fill();
           }
-
-          context.fill();
         }
       }
 
       if (highlights.length) {
         context.globalCompositeOperation = "lighter";
         context.fillStyle = "#F2F7FF";
-        context.globalAlpha = 0.105;
+        context.globalAlpha = 0.16;
         context.beginPath();
 
         for (let index = 0; index < highlights.length; index += 3) {
@@ -254,17 +268,19 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
         const centerX = cssWidth * 0.5;
         const centerY = cssHeight * 0.5;
         const radius = Math.min(cssWidth, cssHeight) * 0.382;
+        const lightCenterX = centerX + radius * 0.2;
+        const lightCenterY = centerY - radius * 0.22;
         haloGradient = context.createRadialGradient(
-          centerX,
-          centerY,
-          radius * 0.22,
-          centerX,
-          centerY,
-          radius * 1.12,
+          lightCenterX,
+          lightCenterY,
+          radius * 0.08,
+          lightCenterX,
+          lightCenterY,
+          radius * 1.08,
         );
-        haloGradient.addColorStop(0, "rgba(53, 92, 145, 0.026)");
-        haloGradient.addColorStop(0.48, "rgba(102, 116, 217, 0.016)");
-        haloGradient.addColorStop(0.86, "rgba(88, 184, 207, 0.005)");
+        haloGradient.addColorStop(0, "rgba(102, 116, 217, 0.025)");
+        haloGradient.addColorStop(0.44, "rgba(65, 111, 174, 0.014)");
+        haloGradient.addColorStop(0.82, "rgba(88, 184, 207, 0.004)");
         haloGradient.addColorStop(1, "rgba(4, 8, 22, 0)");
         haloLeft = centerX - radius * 1.18;
         haloTop = centerY - radius * 1.18;
