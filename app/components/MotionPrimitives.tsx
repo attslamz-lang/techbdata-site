@@ -164,7 +164,7 @@ export function DataRailButton({
     onPointerMove: handlePointerMove,
     onPointerLeave: handlePointerLeave,
     style: motionStyle,
-    whileTap: reducedMotion ? undefined : { scale: variant === "header" ? 0.99 : 0.98, y: 1 },
+    whileTap: reducedMotion ? undefined : { scale: variant === "header" ? 0.99 : 0.985, y: 1 },
   };
 
   if (href) {

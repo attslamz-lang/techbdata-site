@@ -146,56 +146,39 @@ export default function HomePage() {
             </div>
 
             <div className="hero-visual-composition">
-              <svg
-                className="hero-sphere-signal"
-                viewBox="0 0 680 520"
-                preserveAspectRatio="none"
-                aria-hidden="true"
-              >
-                <path pathLength="1" d="M 24 244 C 132 246, 258 292, 427 334" />
-                <circle className="hero-signal-origin" cx="24" cy="244" r="4" />
-                <circle className="hero-signal-contact" cx="427" cy="334" r="4" />
-              </svg>
-
-              <div className="hero-product-scene" aria-label="Путь контакта от источника до менеджера">
+              <div className="hero-product-scene" aria-label="Пример нового контакта в techbdata">
                 <div className="hero-scene-bar">
-                  <span>techbdata · поток контактов</span>
+                  <div className="hero-scene-title">
+                    <span>techbdata</span>
+                    <strong>Новый контакт</strong>
+                  </div>
                   <span className="live-state"><i /> Активно</span>
                 </div>
-                <div className="hero-scene-body">
-                <div className="hero-stage hero-stage-source">
-                  <span className="stage-label">Источник</span>
-                  <div className="source-browser-mini">
-                    <span className="browser-dots" />
-                    <strong>Сайт конкурента</strong>
+
+                <div className="hero-contact-panel">
+                  <div className="hero-contact-source hero-product-row">
+                    <span className="hero-source-mark" aria-hidden="true"><i /></span>
+                    <div>
+                      <span className="hero-ui-label">Источник</span>
+                      <strong>Сайт конкурента</strong>
+                      <small>Раздел услуги</small>
+                    </div>
                   </div>
-                  <div className="source-call-mini">
-                    <span className="phone-icon">☎</span>
-                    <div><strong>Выбранный номер</strong></div>
+
+                  <div className="hero-contact-event hero-product-row">
+                    <span className="hero-ui-label">Событие</span>
+                    <strong>Посетил выбранную страницу</strong>
+                    <small>Сегодня · 12:40</small>
                   </div>
-                </div>
 
-                <div className="hero-flow-track" aria-hidden="true"><span /></div>
-
-                <div className="hero-stage hero-stage-action">
-                  <span className="stage-label">Действие</span>
-                  <strong>Действие клиента</strong>
-                </div>
-
-                <div className="hero-flow-track" aria-hidden="true"><span /></div>
-
-                <div className="hero-stage hero-stage-contact">
-                  <span className="stage-label">Контакт</span>
-                  <div className="contact-avatar">А</div>
-                  <div><strong>+7 977 *** 19 01</strong></div>
-                </div>
-
-                <div className="hero-flow-track" aria-hidden="true"><span /></div>
-
-                <div className="hero-stage hero-stage-manager">
-                  <span className="stage-label">Менеджер</span>
-                  <strong>Готово к звонку</strong>
-                </div>
+                  <div className="hero-contact-record hero-product-row">
+                    <div className="contact-avatar">А</div>
+                    <div className="hero-contact-number">
+                      <span className="hero-ui-label">Контакт</span>
+                      <strong>+7 977 *** 19 01</strong>
+                    </div>
+                    <span className="hero-contact-status"><i aria-hidden="true">✓</i> Передан в отдел продаж</span>
+                  </div>
                 </div>
               </div>
             </div>

@@ -21,9 +21,11 @@ const TAU = Math.PI * 2;
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
 const FULL_TURN_MS = 62_000;
 const TARGET_FRAME_MS = 1000 / 30;
+const INTRO_FAST_MS = 820;
+const INTRO_DECELERATION_MS = 1_580;
 const DPR_CAP = 1.5;
 const MAX_CANVAS_PIXELS = 1_050_000;
-const ALPHA_LEVELS = [0.024, 0.044, 0.07, 0.105, 0.15, 0.21, 0.3, 0.42];
+const ALPHA_LEVELS = [0.024, 0.046, 0.074, 0.112, 0.16, 0.225, 0.32, 0.46];
 const PARTICLE_TONES = ["#355C91", "#416FAE", "#6674D9", "#776EF0", "#58B8CF", "#DCEBFF"];
 
 function noise(index: number, offset = 0) {
@@ -65,8 +67,19 @@ function alphaLevelFor(value: number) {
   if (value < 0.13) return 3;
   if (value < 0.18) return 4;
   if (value < 0.25) return 5;
-  if (value < 0.34) return 6;
+  if (value < 0.37) return 6;
   return 7;
+}
+
+function introSpeedMultiplier(elapsed: number) {
+  if (elapsed < INTRO_FAST_MS) {
+    return 16 - (elapsed / INTRO_FAST_MS) * 3;
+  }
+
+  const progress = Math.min(1, (elapsed - INTRO_FAST_MS) / INTRO_DECELERATION_MS);
+  const endValue = Math.exp(-4.2);
+  const normalizedDecay = (Math.exp(-4.2 * progress) - endValue) / (1 - endValue);
+  return 1 + normalizedDecay * 12;
 }
 
 export function ParticleSphere({ className = "" }: ParticleSphereProps) {
@@ -88,6 +101,7 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
     let frameId: number | null = null;
     let lastRenderTime = 0;
     let lastMotionTime = performance.now();
+    let introElapsed = 0;
     let isNearViewport = true;
     let disposed = false;
     let haloGradient: CanvasGradient | null = null;
@@ -143,18 +157,19 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
         const screenY = centerY + rotatedY * radius * perspective;
         const directional = Math.max(
           0,
-          normalizedX * -0.66 + normalizedY * -0.72 + normalizedZ * 0.34,
+          normalizedX * 0.5 + normalizedY * -0.76 + normalizedZ * 0.42,
         );
-        const diffuse = 0.16 + Math.pow(directional, 1.42) * 0.84;
+        const diffuse = 0.15 + Math.pow(directional, 1.36) * 0.94;
         const depthVisibility = 0.56 + depth * 0.44;
         const backAttenuation = depth < 0.5 ? 0.34 + depth * 0.3 : 1;
+        const frontBoost = depth > 0.5 ? 1 + ((depth - 0.5) / 0.5) * 0.34 : 1;
         const rim = Math.min(1, Math.sqrt(normalizedX * normalizedX + normalizedY * normalizedY));
-        const rimAccent = 1 + Math.pow(rim, 4) * 0.02;
+        const rimAccent = 1 + Math.pow(rim, 4) * 0.006;
         const alpha = Math.min(
-          0.44,
-          (0.034 + diffuse * 0.42) * depthVisibility * backAttenuation * point.intensity * rimAccent,
+          0.48,
+          (0.032 + diffuse * 0.43) * depthVisibility * backAttenuation * frontBoost * point.intensity * rimAccent,
         );
-        const size = point.size * (0.78 + depth * 0.42) * scaleFactor;
+        const size = point.size * (0.78 + depth * 0.42) * scaleFactor * 1.12;
         const level = alphaLevelFor(alpha);
         const bucket = buckets[point.tone * ALPHA_LEVELS.length + level];
 
@@ -192,7 +207,7 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
       if (highlights.length) {
         context.globalCompositeOperation = "lighter";
         context.fillStyle = "#F2F7FF";
-        context.globalAlpha = 0.085;
+        context.globalAlpha = 0.105;
         context.beginPath();
 
         for (let index = 0; index < highlights.length; index += 3) {
@@ -247,9 +262,9 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
           centerY,
           radius * 1.12,
         );
-        haloGradient.addColorStop(0, "rgba(4, 8, 22, 0)");
-        haloGradient.addColorStop(0.68, "rgba(53, 92, 145, 0.026)");
-        haloGradient.addColorStop(0.9, "rgba(102, 116, 217, 0.052)");
+        haloGradient.addColorStop(0, "rgba(53, 92, 145, 0.026)");
+        haloGradient.addColorStop(0.48, "rgba(102, 116, 217, 0.016)");
+        haloGradient.addColorStop(0.86, "rgba(88, 184, 207, 0.005)");
         haloGradient.addColorStop(1, "rgba(4, 8, 22, 0)");
         haloLeft = centerX - radius * 1.18;
         haloTop = centerY - radius * 1.18;
@@ -282,7 +297,12 @@ export function ParticleSphere({ className = "" }: ParticleSphereProps) {
         const elapsed = Math.min(100, Math.max(0, time - lastMotionTime));
         lastMotionTime = time;
         lastRenderTime = time - (sinceLastRender % TARGET_FRAME_MS);
-        rotation = (rotation + (elapsed / FULL_TURN_MS) * TAU) % TAU;
+        const introDuration = INTRO_FAST_MS + INTRO_DECELERATION_MS;
+        const speedMultiplier = introElapsed < introDuration
+          ? introSpeedMultiplier(introElapsed)
+          : 1;
+        rotation = (rotation + (elapsed / FULL_TURN_MS) * TAU * speedMultiplier) % TAU;
+        introElapsed = Math.min(introDuration, introElapsed + elapsed);
         const drift = Math.sin((time / 44_000) * TAU) * 0.012;
         draw(rotation, drift);
       }
